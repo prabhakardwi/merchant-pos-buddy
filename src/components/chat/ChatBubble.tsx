@@ -28,7 +28,7 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ message }) => {
 
       <div
         className={cn(
-          "rounded-lg px-4 py-3 max-w-[80%] animate-bounce-in",
+          "rounded-lg px-4 py-3 max-w-[80%] animate-fade-in",
           isBot ? "bg-white border text-brand-dark shadow-sm" : 
           isSystem ? "bg-brand-lightBlue text-brand-dark" : 
           "bg-brand-blue text-white"
