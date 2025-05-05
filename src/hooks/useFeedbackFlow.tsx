@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { FeedbackData, InstallationStep } from "@/types/chatbot";
 import { FEEDBACK_QUESTIONS } from "@/constants/chatbot";
 import { toast } from "@/hooks/use-toast";

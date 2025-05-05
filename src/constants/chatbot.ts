@@ -37,67 +37,16 @@ export const TIME_SLOTS: string[] = [
 ];
 
 export const feedbackQuestions: FeedbackQuestion[] = [
-  {
-    key: "satisfaction",
-    question: "Were you satisfied with our previous installation service?",
-    positiveDetail: "Thanks for your positive feedback about our installation service!"
-  },
-  {
-    key: "speed",
-    question: "Was the installation completed in a timely manner?",
-    positiveDetail: "We're glad our service was prompt and efficient!"
-  },
-  {
-    key: "knowledge",
-    question: "Was the engineer knowledgeable and helpful?",
-    positiveDetail: "Our engineers take pride in their expertise. Thank you!"
-  },
-  {
-    key: "recommend",
-    question: "Would you recommend our POS services to others?",
-    positiveDetail: "We appreciate your willingness to recommend us!"
-  }
+  { key: "scheduledDateMet", question: "Was the installation done on the scheduled date?", positiveDetail: "Great to hear we met the schedule!" },
+  { key: "engineerProfessional", question: "Was the engineer polite and professional?", positiveDetail: "We're glad our team provided professional service!" },
+  { key: "properInstallation", question: "Was the device installed properly?", positiveDetail: "Excellent! Quality installation is our priority." },
+  { key: "trainingProvided", question: "Was the demo/training provided?", positiveDetail: "Wonderful! Training is essential for optimal usage." },
+  { key: "merchantIdShared", question: "Were TIDs and merchant IDs shared?", positiveDetail: "Perfect! Having your IDs is important." }
 ];
 
 export const FEEDBACK_QUESTIONS = feedbackQuestions;
 
 export const COMMENTS_PROMPT = "We would appreciate if you could share any additional comments about our service.";
-
-// Add the SERVICE_REQUEST_FIELDS constant that was missing
-export const SERVICE_REQUEST_FIELDS = {
-  merchantName: {
-    label: "Merchant Name",
-    placeholder: "Enter your business name"
-  },
-  merchantId: {
-    label: "Merchant ID",
-    placeholder: "Enter your merchant ID"
-  },
-  serialNumber: {
-    label: "POS Serial Number",
-    placeholder: "Enter POS machine serial number"
-  },
-  requestType: {
-    label: "Request Type",
-    placeholder: "Select request type"
-  },
-  preferredDate: {
-    label: "Preferred Date",
-    placeholder: "Select preferred date"
-  },
-  preferredTime: {
-    label: "Preferred Time",
-    placeholder: "Select preferred time"
-  },
-  contactName: {
-    label: "Contact Person",
-    placeholder: "Enter contact person name"
-  },
-  contactMobile: {
-    label: "Contact Mobile",
-    placeholder: "Enter 10-digit mobile number"
-  }
-};
 
 export const FAQ_ITEMS: FAQItem[] = [
   {

@@ -15,7 +15,7 @@ export interface Option {
 
 export type RequestType = 'installation' | 'deinstallation' | 'reactivation' | 'maintenance';
 
-export type POSType = "APOS" | "ClassicPOS";
+export type POSType = 'APOS' | 'ClassicPOS';
 
 export interface ServiceRequest {
   merchantName: string;

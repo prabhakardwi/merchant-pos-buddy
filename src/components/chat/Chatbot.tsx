@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import ChatBubble from "./ChatBubble";
@@ -11,15 +10,13 @@ import {
   ServiceRequest, 
   RequestType, 
   MerchantInfo,
-  InstallationStep,
-  POSType
+  InstallationStep
 } from "@/types/chatbot";
 import { 
   GREETING_MESSAGE, 
-  MAIN_MENU_OPTIONS,
-  FAQ_MENU_OPTIONS
+  MAIN_MENU_OPTIONS
 } from "@/constants/chatbot";
-import { findFAQMatch, generateOTP, getServiceEngineer, generateTicketNumber } from "@/utils/chatbot";
+import { findFAQMatch } from "@/utils/chatbot";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, RotateCcw, Coins } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
@@ -48,8 +45,7 @@ const Chatbot: React.FC = () => {
     expectedInput,
     setExpectedInput,
     showCoins,
-    setShowCoins,
-    setMessages
+    setShowCoins
   } = useChatState();
   
   // Installation flow hooks
@@ -86,7 +82,6 @@ const Chatbot: React.FC = () => {
     handleServiceRequestCancel
   } = useServiceRequests({
     addBotMessage,
-    addSystemMessage,
     setActiveRequestType,
     setInputDisabled,
     showMainMenu
@@ -149,6 +144,7 @@ const Chatbot: React.FC = () => {
   // Show FAQ menu options
   function showFAQMenu() {
     addSystemMessage("Here are some frequently asked questions:");
+    const { FAQ_MENU_OPTIONS } = require("@/constants/chatbot");
     setCurrentOptions(FAQ_MENU_OPTIONS);
     setShowOptions(true);
     setInputDisabled(true);
@@ -190,7 +186,7 @@ const Chatbot: React.FC = () => {
     // Merchant confirmation step
     if (installationStep === "confirmMerchant") {
       if (option.value === "yes") {
-        const newOtp = generateOTP();
+        const newOtp = require("@/utils/chatbot").generateOTP();
         setOtp(newOtp);
         setTimeout(() => {
           addBotMessage(`Great! To verify your identity, we've sent a one-time password (OTP) to the registered mobile number. For this demo, your OTP is: ${newOtp}`);
@@ -211,7 +207,7 @@ const Chatbot: React.FC = () => {
     
     // POS type selection step
     else if (installationStep === "posTypeSelection" && (option.value === "APOS" || option.value === "ClassicPOS")) {
-      handlePOSTypeSelection(option.value as POSType);
+      handlePOSTypeSelection(option.value);
       return true;
     }
     
@@ -278,7 +274,7 @@ const Chatbot: React.FC = () => {
   };
   
   // Handle POS type selection
-  const handlePOSTypeSelection = (posType: POSType) => {
+  const handlePOSTypeSelection = (posType: string) => {
     setCurrentRequest({
       ...currentRequest,
       posType
@@ -333,13 +329,15 @@ const Chatbot: React.FC = () => {
   
   // Handle time slot selection
   const handleTimeSlotSelection = (selectedTime: string) => {
-    // Generate service engineer and ticket
-    const engineer = getServiceEngineer();
-    const ticketNumber = generateTicketNumber();
+    const { generateTicketNumber, getServiceEngineer } = require("@/utils/chatbot");
     
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const tomorrowFormatted = tomorrow.toISOString().split('T')[0];
+    
+    // Generate service engineer and ticket
+    const engineer = getServiceEngineer();
+    const ticketNumber = generateTicketNumber();
     
     const finalRequest: ServiceRequest = {
       ...(currentRequest as ServiceRequest),

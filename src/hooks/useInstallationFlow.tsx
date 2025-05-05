@@ -1,11 +1,10 @@
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { 
   ServiceRequest, 
   MerchantInfo, 
   InstallationStep,
-  RequestType,
-  POSType
+  RequestType
 } from "@/types/chatbot";
 
 interface InstallationFlowProps {
@@ -22,7 +21,6 @@ interface InstallationFlowProps {
 const useInstallationFlow = ({
   addUserMessage,
   addBotMessage,
-  addSystemMessage,
   setInputDisabled,
   setExpectedInput,
   showMainMenu
