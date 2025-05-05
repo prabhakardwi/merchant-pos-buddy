@@ -1,4 +1,3 @@
-
 import { FAQItem, Option, FeedbackQuestion } from "@/types/chatbot";
 import React from "react";
 
@@ -37,11 +36,26 @@ export const TIME_SLOTS: string[] = [
 ];
 
 export const feedbackQuestions: FeedbackQuestion[] = [
-  { key: "scheduledDateMet", question: "Was the installation done on the scheduled date?", positiveDetail: "Great to hear we met the schedule!" },
-  { key: "engineerProfessional", question: "Was the engineer polite and professional?", positiveDetail: "We're glad our team provided professional service!" },
-  { key: "properInstallation", question: "Was the device installed properly?", positiveDetail: "Excellent! Quality installation is our priority." },
-  { key: "trainingProvided", question: "Was the demo/training provided?", positiveDetail: "Wonderful! Training is essential for optimal usage." },
-  { key: "merchantIdShared", question: "Were TIDs and merchant IDs shared?", positiveDetail: "Perfect! Having your IDs is important." }
+  {
+    key: "satisfaction",
+    question: "Were you satisfied with our previous installation service?",
+    positiveDetail: "Thanks for your positive feedback about our installation service!"
+  },
+  {
+    key: "speed",
+    question: "Was the installation completed in a timely manner?",
+    positiveDetail: "We're glad our service was prompt and efficient!"
+  },
+  {
+    key: "knowledge",
+    question: "Was the engineer knowledgeable and helpful?",
+    positiveDetail: "Our engineers take pride in their expertise. Thank you!"
+  },
+  {
+    key: "recommend",
+    question: "Would you recommend our POS services to others?",
+    positiveDetail: "We appreciate your willingness to recommend us!"
+  }
 ];
 
 export const FEEDBACK_QUESTIONS = feedbackQuestions;

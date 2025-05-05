@@ -85,6 +85,7 @@ const Chatbot: React.FC = () => {
     handleServiceRequestCancel
   } = useServiceRequests({
     addBotMessage,
+    addSystemMessage,
     setActiveRequestType,
     setInputDisabled,
     showMainMenu

@@ -1,11 +1,12 @@
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { ServiceRequest, RequestType } from "@/types/chatbot";
 import { REQUEST_TYPE_LABELS } from "@/constants/chatbot";
 import { toast } from "@/hooks/use-toast";
 
 interface ServiceRequestsProps {
   addBotMessage: (content: string | React.ReactNode) => void;
+  addSystemMessage: (content: string | React.ReactNode, showCoin?: boolean) => void;
   setActiveRequestType: (type: RequestType | null) => void;
   setInputDisabled: (disabled: boolean) => void;
   showMainMenu: () => void;
@@ -13,6 +14,7 @@ interface ServiceRequestsProps {
 
 const useServiceRequests = ({
   addBotMessage,
+  addSystemMessage,
   setActiveRequestType,
   setInputDisabled,
   showMainMenu
@@ -38,7 +40,7 @@ const useServiceRequests = ({
     // Show confirmation message with ticket details
     const requestName = REQUEST_TYPE_LABELS[request.requestType];
     
-    const SystemMessage = (
+    const systemMessage = (
       <div className="space-y-2">
         <p className="font-medium">✅ {requestName} Request Submitted</p>
         <p>Your service ticket has been created:</p>
@@ -49,16 +51,7 @@ const useServiceRequests = ({
       </div>
     );
     
-    // Use a system message function (must be provided by parent component)
-    const addSystemMessage = (message: React.ReactNode) => {
-      // This is a workaround since we don't have access to addSystemMessage directly
-      const messageElement = document.createElement('div');
-      messageElement.className = 'system-message';
-      messageElement.innerHTML = '<div>' + JSON.stringify(message) + '</div>';
-      document.body.appendChild(messageElement);
-    };
-    
-    addSystemMessage(SystemMessage);
+    addSystemMessage(systemMessage);
 
     toast({
       title: "Request Submitted",
