@@ -1,4 +1,5 @@
 
+import React from "react";
 import { CHATBOT_NAME, FAQ_ITEMS } from "../constants/chatbot";
 import { FAQItem } from "../types/chatbot";
 

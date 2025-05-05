@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import ChatBubble from "./ChatBubble";
@@ -25,6 +24,7 @@ import useChatState from "@/hooks/useChatState";
 import useInstallationFlow from "@/hooks/useInstallationFlow";
 import useServiceRequests from "@/hooks/useServiceRequests";
 import useFeedbackFlow from "@/hooks/useFeedbackFlow";
+import FeedbackInput from "./FeedbackInput";
 
 const Chatbot: React.FC = () => {
   // Chat UI State
