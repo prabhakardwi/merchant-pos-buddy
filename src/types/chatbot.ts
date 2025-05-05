@@ -1,4 +1,3 @@
-
 export type MessageType = 'bot' | 'user' | 'system';
 
 export interface Message {
@@ -18,7 +17,7 @@ export type RequestType = 'installation' | 'deinstallation' | 'reactivation' | '
 
 export type POSType = 'APOS' | 'ClassicPOS';
 
-export type Language = 'english' | 'hindi' | 'spanish';
+export type Language = 'english' | 'hindi' | 'spanish' | 'marathi';
 
 export interface ServiceRequest {
   merchantName: string;

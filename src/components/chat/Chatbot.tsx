@@ -63,10 +63,11 @@ const Chatbot: React.FC = () => {
   const [showCoins, setShowCoins] = useState<boolean[]>([]);
   const [language, setLanguage] = useState<Language>("english");
 
-  // Language options for the dropdown
+  // Language options for the dropdown - updated to include Marathi
   const languageOptions: { value: Language; label: string }[] = [
     { value: "english", label: "English" },
     { value: "hindi", label: "हिंदी (Hindi)" },
+    { value: "marathi", label: "मराठी (Marathi)" },
     { value: "spanish", label: "Español (Spanish)" }
   ];
 
