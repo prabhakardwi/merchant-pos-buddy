@@ -31,6 +31,19 @@ export interface ServiceRequest {
   posType?: POSType;
   serviceEngineerName?: string;
   serviceEngineerMobile?: string;
+  feedback?: FeedbackData;
+}
+
+export interface FeedbackData {
+  scheduledDateMet: boolean;
+  engineerProfessional: boolean;
+  properInstallation: boolean;
+  postInstallationTest: boolean;
+  trainingProvided: boolean;
+  explanationClear: boolean;
+  functionsDemonstrated: boolean;
+  installationReportShared: boolean;
+  merchantIdShared: boolean;
 }
 
 export interface FAQItem {
@@ -53,4 +66,5 @@ export type InstallationStep =
   | 'otpVerification'
   | 'posTypeSelection'
   | 'timeSlotSelection'
+  | 'feedback'
   | 'confirmation';

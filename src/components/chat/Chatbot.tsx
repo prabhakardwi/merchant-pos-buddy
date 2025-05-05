@@ -12,7 +12,8 @@ import {
   RequestType, 
   MerchantInfo, 
   InstallationStep,
-  POSType
+  POSType,
+  FeedbackData
 } from "@/types/chatbot";
 import { 
   GREETING_MESSAGE, 
@@ -38,7 +39,22 @@ const Chatbot: React.FC = () => {
   const [merchantInfo, setMerchantInfo] = useState<MerchantInfo | null>(null);
   const [currentRequest, setCurrentRequest] = useState<Partial<ServiceRequest>>({});
   const [otp, setOtp] = useState<string>("");
+  const [currentFeedbackQuestion, setCurrentFeedbackQuestion] = useState<number>(0);
+  const [feedbackData, setFeedbackData] = useState<Partial<FeedbackData>>({});
   const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  // Feedback questions array
+  const feedbackQuestions = [
+    { key: "scheduledDateMet", question: "Was the installation done on the scheduled date?" },
+    { key: "engineerProfessional", question: "Was the engineer polite and professional?" },
+    { key: "properInstallation", question: "Was the device installed properly and did the engineer show you the test transaction slip?" },
+    { key: "postInstallationTest", question: "Was the POS machine tested post-installation?" },
+    { key: "trainingProvided", question: "Was the demo/training provided?" },
+    { key: "explanationClear", question: "Was the explanation of device usage clear?" },
+    { key: "functionsDemonstrated", question: "Were all functions (print, card swipe, QR scan, etc.) demonstrated?" },
+    { key: "installationReportShared", question: "Was an installation report shared or signed?" },
+    { key: "merchantIdShared", question: "Were TIDs and merchant IDs shared?" }
+  ];
 
   // Initialize chatbot with greeting
   useEffect(() => {
@@ -115,6 +131,47 @@ const Chatbot: React.FC = () => {
     const mobile = `+1 ${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}`;
     
     return { name: randomName, mobile };
+  };
+
+  const handleFeedbackQuestion = () => {
+    if (currentFeedbackQuestion < feedbackQuestions.length) {
+      const question = feedbackQuestions[currentFeedbackQuestion];
+      
+      addBotMessage(question.question);
+      
+      setCurrentOptions([
+        { id: "yes", label: "Yes", value: "yes" },
+        { id: "no", label: "No", value: "no" }
+      ]);
+      setShowOptions(true);
+      setInstallationStep("feedback");
+    } else {
+      // All feedback questions completed
+      const positiveAnswers = Object.values(feedbackData).filter(value => value === true).length;
+      const feedbackScore = Math.round((positiveAnswers / feedbackQuestions.length) * 100);
+      
+      // Award service coins based on feedback
+      addSystemMessage(
+        <div className="space-y-2">
+          <p className="font-medium">✅ Feedback Submitted</p>
+          <p>Thank you for your feedback! You've earned <strong>5 Service Coins</strong> for completing the survey.</p>
+          <p>Your feedback score: <strong>{feedbackScore}%</strong></p>
+          <p>We appreciate your input and will use it to improve our service!</p>
+        </div>
+      );
+      
+      toast({
+        title: "Feedback Submitted",
+        description: `You've earned 5 Service Coins!`,
+        duration: 5000,
+      });
+      
+      // Return to main menu
+      setTimeout(() => {
+        addBotMessage("Is there anything else I can help you with?");
+        showMainMenu();
+      }, 2000);
+    }
   };
 
   const handleInstallationFlow = (input: string) => {
@@ -316,17 +373,46 @@ const Chatbot: React.FC = () => {
           duration: 5000,
         });
         
-        // Reset installation flow and return to main menu
-        setInstallationStep("merchantId");
-        setCurrentRequest({});
-        setMerchantInfo(null);
-        setExpectedInput("");
-        
+        // Start feedback process after a delay
         setTimeout(() => {
-          addBotMessage("Thank you for scheduling your POS installation. Is there anything else I can help you with?");
-          showMainMenu();
+          addBotMessage("We'd like to ask for your feedback on previous installations to earn service coins. Would you like to proceed with the feedback?");
+          setCurrentOptions([
+            { id: "yes-feedback", label: "Yes, provide feedback", value: "yes-feedback" },
+            { id: "skip-feedback", label: "No, skip feedback", value: "skip-feedback" }
+          ]);
+          setShowOptions(true);
         }, 2000);
       }, 1000);
+    } else if (option.value === "yes-feedback") {
+      // Start the feedback process
+      setCurrentFeedbackQuestion(0);
+      setFeedbackData({});
+      handleFeedbackQuestion();
+    } else if (option.value === "skip-feedback") {
+      // Skip feedback and return to main menu
+      addBotMessage("Thank you for scheduling your POS installation. Is there anything else I can help you with?");
+      
+      // Reset installation flow and return to main menu
+      setInstallationStep("merchantId");
+      setCurrentRequest({});
+      setMerchantInfo(null);
+      setExpectedInput("");
+      showMainMenu();
+    } else if (installationStep === "feedback" && (option.value === "yes" || option.value === "no")) {
+      // Handle feedback response
+      const currentQuestion = feedbackQuestions[currentFeedbackQuestion];
+      const key = currentQuestion.key as keyof FeedbackData;
+      
+      setFeedbackData(prev => ({
+        ...prev,
+        [key]: option.value === "yes"
+      }));
+      
+      // Move to next question
+      setCurrentFeedbackQuestion(currentFeedbackQuestion + 1);
+      setTimeout(() => {
+        handleFeedbackQuestion();
+      }, 500);
     } else {
       // Handle FAQ option selection
       const faqMatch = findFAQMatch(option.value);
@@ -440,6 +526,8 @@ const Chatbot: React.FC = () => {
     setInstallationStep("merchantId");
     setCurrentRequest({});
     setMerchantInfo(null);
+    setCurrentFeedbackQuestion(0);
+    setFeedbackData({});
     
     // Re-initialize chatbot
     addBotMessage(GREETING_MESSAGE);
