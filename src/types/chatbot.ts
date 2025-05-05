@@ -32,6 +32,7 @@ export interface ServiceRequest {
   serviceEngineerName?: string;
   serviceEngineerMobile?: string;
   feedback?: FeedbackData;
+  coins?: number;
 }
 
 export interface FeedbackData {
@@ -44,6 +45,7 @@ export interface FeedbackData {
   functionsDemonstrated: boolean;
   installationReportShared: boolean;
   merchantIdShared: boolean;
+  textFeedback?: string;
 }
 
 export interface FAQItem {
@@ -67,4 +69,5 @@ export type InstallationStep =
   | 'posTypeSelection'
   | 'timeSlotSelection'
   | 'feedback'
+  | 'textFeedback'
   | 'confirmation';

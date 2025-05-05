@@ -3,13 +3,14 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { Message } from "@/types/chatbot";
 import { Avatar } from "@/components/ui/avatar";
-import { MessageSquare, User } from "lucide-react";
+import { MessageSquare, User, Coins } from "lucide-react";
 
 interface ChatBubbleProps {
   message: Message;
+  showCoin?: boolean;
 }
 
-const ChatBubble: React.FC<ChatBubbleProps> = ({ message }) => {
+const ChatBubble: React.FC<ChatBubbleProps> = ({ message, showCoin = false }) => {
   const isBot = message.type === "bot";
   const isSystem = message.type === "system";
 
@@ -34,7 +35,14 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ message }) => {
           "bg-brand-blue text-white"
         )}
       >
-        {message.content}
+        <div className="flex items-start gap-2">
+          {showCoin && (
+            <span className="inline-flex mt-1">
+              <Coins className="h-4 w-4 text-yellow-500" />
+            </span>
+          )}
+          <div>{message.content}</div>
+        </div>
       </div>
 
       {!isBot && !isSystem && (
