@@ -1,4 +1,3 @@
-
 import { FAQItem } from "../types/chatbot";
 
 export const CHATBOT_NAME = "POS Buddy";
@@ -108,7 +107,7 @@ export const REQUEST_TYPE_LABELS = {
   maintenance: "Preventive Maintenance"
 };
 
-// Improved feedback questions for installation experience
+// Improved feedback questions for installation experience - reduced number of questions
 export const FEEDBACK_QUESTIONS = [
   { 
     key: "scheduledDateMet", 
@@ -126,29 +125,9 @@ export const FEEDBACK_QUESTIONS = [
     positiveDetail: "Proper installation ensures smooth operation and reduces future service calls."
   },
   { 
-    key: "postInstallationTest", 
-    question: "Did the engineer conduct a complete test transaction and show you the test slip?",
-    positiveDetail: "Test transactions confirm the system is working properly before the engineer leaves."
-  },
-  { 
     key: "trainingProvided", 
     question: "Was comprehensive training provided on how to use the POS system?",
     positiveDetail: "Proper training ensures merchants can fully utilize all features of their POS system."
-  },
-  { 
-    key: "explanationClear", 
-    question: "Were all your questions answered clearly and thoroughly?",
-    positiveDetail: "Clear communication helps merchants understand their new system better."
-  },
-  { 
-    key: "functionsDemonstrated", 
-    question: "Were all key functions (printing, card processing, QR payments) demonstrated successfully?",
-    positiveDetail: "Demonstration of all functions ensures merchants can operate independently."
-  },
-  { 
-    key: "installationReportShared", 
-    question: "Did you receive a completed installation report or digital confirmation?",
-    positiveDetail: "Documentation provides a record of completed work for future reference."
   },
   { 
     key: "merchantIdShared", 

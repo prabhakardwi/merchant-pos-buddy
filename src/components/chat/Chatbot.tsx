@@ -48,16 +48,12 @@ const Chatbot: React.FC = () => {
   const [earnedCoins, setEarnedCoins] = useState<number>(0);
   const [showCoins, setShowCoins] = useState<boolean[]>([]);
 
-  // Feedback questions array
+  // Feedback questions array - updated to match our reduced list in constants
   const feedbackQuestions = [
     { key: "scheduledDateMet", question: "Was the installation done on the scheduled date?" },
     { key: "engineerProfessional", question: "Was the engineer polite and professional?" },
-    { key: "properInstallation", question: "Was the device installed properly and did the engineer show you the test transaction slip?" },
-    { key: "postInstallationTest", question: "Was the POS machine tested post-installation?" },
+    { key: "properInstallation", question: "Was the device installed properly?" },
     { key: "trainingProvided", question: "Was the demo/training provided?" },
-    { key: "explanationClear", question: "Was the explanation of device usage clear?" },
-    { key: "functionsDemonstrated", question: "Were all functions (print, card swipe, QR scan, etc.) demonstrated?" },
-    { key: "installationReportShared", question: "Was an installation report shared or signed?" },
     { key: "merchantIdShared", question: "Were TIDs and merchant IDs shared?" }
   ];
 
