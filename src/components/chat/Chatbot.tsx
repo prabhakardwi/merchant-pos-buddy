@@ -836,4 +836,13 @@ const Chatbot: React.FC = () => {
             expectedInput === "otpVerification" ? "Enter the OTP code..." :
             showTextFeedback ? "Type your feedback..." :
             showComments ? "Type your comments..." :
-            inputDisabled ? "Please
+            inputDisabled ? "Please select an option above..." : 
+            "Type your question here..."
+          }
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Chatbot;
