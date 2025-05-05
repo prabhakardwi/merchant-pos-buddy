@@ -49,16 +49,8 @@ const useServiceRequests = ({
       </div>
     );
     
-    // Use a system message function (must be provided by parent component)
-    const addSystemMessage = (message: React.ReactNode) => {
-      // This is a workaround since we don't have access to addSystemMessage directly
-      const messageElement = document.createElement('div');
-      messageElement.className = 'system-message';
-      messageElement.innerHTML = '<div>' + JSON.stringify(message) + '</div>';
-      document.body.appendChild(messageElement);
-    };
-    
-    addSystemMessage(SystemMessage);
+    // Add the system message directly
+    addBotMessage(SystemMessage);
 
     toast({
       title: "Request Submitted",

@@ -175,10 +175,10 @@ const Chatbot: React.FC = () => {
     const ticketNumber = generateTicketNumber();
     
     const finalRequest = {
-      ...(currentRequest),
+      ...currentRequest,
       preferredDate: tomorrowFormatted,
       preferredTime: selectedTime,
-      requestType: "installation" as RequestType, // Type casting here
+      requestType: "installation" as RequestType, // Properly cast to RequestType
       serialNumber: `SN-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`,
       ticketNumber,
       serviceEngineerName: engineer.name,
@@ -324,7 +324,7 @@ const Chatbot: React.FC = () => {
     setCurrentRequest({});
     setMerchantInfo(null);
     setCurrentFeedbackQuestion(0);
-    setFeedbackData(prev => ({})); // Using callback pattern here too
+    setFeedbackData(prev => ({})); // Using callback pattern here
     setShowTextFeedback(false);
     setTextFeedback("");
     setShowComments(false);
