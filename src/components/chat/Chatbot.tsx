@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import ChatBubble from "./ChatBubble";
@@ -198,10 +197,14 @@ const Chatbot: React.FC = () => {
   };
 
   const handleFeedbackQuestion = () => {
-    if (currentFeedbackQuestion < feedbackQuestions.length) {
-      const question = feedbackQuestions[currentFeedbackQuestion];
+    if (currentFeedbackQuestion < FEEDBACK_QUESTIONS.length) {
+      const question = FEEDBACK_QUESTIONS[currentFeedbackQuestion];
       
-      addBotMessage(question.question);
+      addBotMessage(
+        <div className="space-y-1">
+          <p>{question.question}</p>
+        </div>
+      );
       
       setCurrentOptions([
         { id: "yes", label: "Yes", value: "yes" },
@@ -212,7 +215,7 @@ const Chatbot: React.FC = () => {
     } else {
       // All feedback questions completed
       const positiveAnswers = Object.values(feedbackData).filter(value => value === true).length;
-      const feedbackScore = Math.round((positiveAnswers / feedbackQuestions.length) * 100);
+      const feedbackScore = Math.round((positiveAnswers / FEEDBACK_QUESTIONS.length) * 100);
       
       // Award service coins based on feedback
       const feedbackCoins = positiveAnswers;
@@ -485,7 +488,7 @@ const Chatbot: React.FC = () => {
       showMainMenu();
     } else if (installationStep === "feedback" && (option.value === "yes" || option.value === "no")) {
       // Handle feedback response
-      const currentQuestion = feedbackQuestions[currentFeedbackQuestion];
+      const currentQuestion = FEEDBACK_QUESTIONS[currentFeedbackQuestion];
       const key = currentQuestion.key as keyof FeedbackData;
       const isPositive = option.value === "yes";
       
@@ -496,7 +499,12 @@ const Chatbot: React.FC = () => {
       
       // Show coin earned for each positive answer
       if (isPositive) {
-        addBotMessage(`You earned 1 Service Coin! 🪙`, true);
+        addBotMessage(
+          <div className="space-y-1">
+            <p>You earned 1 Service Coin! 🪙</p>
+            <p className="text-sm text-gray-600 italic">{currentQuestion.positiveDetail}</p>
+          </div>
+        , true);
       }
       
       // Move to next question
