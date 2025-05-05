@@ -324,7 +324,7 @@ const Chatbot: React.FC = () => {
     setCurrentRequest({});
     setMerchantInfo(null);
     setCurrentFeedbackQuestion(0);
-    setFeedbackData(prev => ({})); // Using callback pattern here
+    setFeedbackData(() => ({})); // Using callback pattern here
     setShowTextFeedback(false);
     setTextFeedback("");
     setShowComments(false);
