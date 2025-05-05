@@ -16,9 +16,10 @@ import {
 } from "@/types/chatbot";
 import { 
   GREETING_MESSAGE, 
-  MAIN_MENU_OPTIONS
+  MAIN_MENU_OPTIONS,
+  FAQ_MENU_OPTIONS
 } from "@/constants/chatbot";
-import { findFAQMatch } from "@/utils/chatbot";
+import { findFAQMatch, generateOTP, getServiceEngineer, generateTicketNumber } from "@/utils/chatbot";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, RotateCcw, Coins } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
@@ -148,7 +149,6 @@ const Chatbot: React.FC = () => {
   // Show FAQ menu options
   function showFAQMenu() {
     addSystemMessage("Here are some frequently asked questions:");
-    const { FAQ_MENU_OPTIONS } = require("@/constants/chatbot");
     setCurrentOptions(FAQ_MENU_OPTIONS);
     setShowOptions(true);
     setInputDisabled(true);
@@ -190,7 +190,7 @@ const Chatbot: React.FC = () => {
     // Merchant confirmation step
     if (installationStep === "confirmMerchant") {
       if (option.value === "yes") {
-        const newOtp = require("@/utils/chatbot").generateOTP();
+        const newOtp = generateOTP();
         setOtp(newOtp);
         setTimeout(() => {
           addBotMessage(`Great! To verify your identity, we've sent a one-time password (OTP) to the registered mobile number. For this demo, your OTP is: ${newOtp}`);
@@ -333,15 +333,13 @@ const Chatbot: React.FC = () => {
   
   // Handle time slot selection
   const handleTimeSlotSelection = (selectedTime: string) => {
-    const { generateTicketNumber, getServiceEngineer } = require("@/utils/chatbot");
+    // Generate service engineer and ticket
+    const engineer = getServiceEngineer();
+    const ticketNumber = generateTicketNumber();
     
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const tomorrowFormatted = tomorrow.toISOString().split('T')[0];
-    
-    // Generate service engineer and ticket
-    const engineer = getServiceEngineer();
-    const ticketNumber = generateTicketNumber();
     
     const finalRequest: ServiceRequest = {
       ...(currentRequest as ServiceRequest),

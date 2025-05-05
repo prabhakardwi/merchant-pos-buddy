@@ -1,3 +1,4 @@
+
 import { FAQItem, Option, FeedbackQuestion } from "@/types/chatbot";
 import React from "react";
 
@@ -62,7 +63,7 @@ export const FEEDBACK_QUESTIONS = feedbackQuestions;
 
 export const COMMENTS_PROMPT = "We would appreciate if you could share any additional comments about our service.";
 
-// Add the missing SERVICE_REQUEST_FIELDS constant
+// Add the SERVICE_REQUEST_FIELDS constant that was missing
 export const SERVICE_REQUEST_FIELDS = {
   merchantName: {
     label: "Merchant Name",
