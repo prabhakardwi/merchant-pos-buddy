@@ -315,16 +315,12 @@ export const useInstallationFlow = (
 
   return {
     installationStep,
-    setInstallationStep, // Explicitly exposing the setter
     merchantInfo,
-    setMerchantInfo, // Explicitly exposing the setter
     currentRequest,
     otp,
     setOtp,
     currentFeedbackQuestion,
-    setCurrentFeedbackQuestion, // Explicitly exposing the setter
     feedbackData,
-    setFeedbackData, // Explicitly exposing the setter
     earnedCoins,
     setEarnedCoins,
     showTextFeedback,
