@@ -1,4 +1,3 @@
-
 export type MessageType = 'bot' | 'user' | 'system';
 
 export interface Message {
@@ -52,6 +51,12 @@ export interface FAQItem {
   keywords: string[];
   question: string;
   answer: string;
+}
+
+export interface FeedbackQuestion {
+  key: string;
+  question: string;
+  positiveDetail: string;
 }
 
 export interface MerchantInfo {

@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import ChatBubble from "./ChatBubble";
@@ -19,7 +20,8 @@ import {
   MAIN_MENU_OPTIONS, 
   FAQ_MENU_OPTIONS,
   REQUEST_TYPE_LABELS,
-  TIME_SLOTS
+  TIME_SLOTS,
+  FEEDBACK_QUESTIONS
 } from "@/constants/chatbot";
 import { findFAQMatch, formatBotMessage, generateTicketNumber, getCurrentDate } from "@/utils/chatbot";
 import { Button } from "@/components/ui/button";

@@ -38,6 +38,21 @@ export const FAQ_ITEMS: FAQItem[] = [
     keywords: ["time", "long", "duration", "installation"],
     question: "How long does it take for installation?",
     answer: "Installation is typically completed within 24-48 working hours after request submission."
+  },
+  {
+    keywords: ["payment", "process", "transaction", "fees"],
+    question: "How do I process a payment?",
+    answer: "To process a payment, select the payment option on your POS, enter the amount, and follow the on-screen instructions for card or contactless payment."
+  },
+  {
+    keywords: ["refund", "return", "cancel", "transaction"],
+    question: "How do I process a refund?",
+    answer: "To process a refund, access the transaction history on your POS, locate the transaction, select 'refund,' and follow the on-screen instructions."
+  },
+  {
+    keywords: ["paper", "receipt", "roll", "change"],
+    question: "How to change the receipt paper roll?",
+    answer: "To change the paper roll, open the printer compartment, remove the old roll core, insert the new roll with paper feeding from underneath, and close the compartment until it clicks."
   }
 ];
 
@@ -92,3 +107,52 @@ export const REQUEST_TYPE_LABELS = {
   reactivation: "Reactivation",
   maintenance: "Preventive Maintenance"
 };
+
+// Improved feedback questions for installation experience
+export const FEEDBACK_QUESTIONS = [
+  { 
+    key: "scheduledDateMet", 
+    question: "Was the installation completed on the scheduled date and time?",
+    positiveDetail: "Punctual service delivery helps merchants plan their business operations efficiently."
+  },
+  { 
+    key: "engineerProfessional", 
+    question: "Was the engineer courteous, professional, and properly identified?",
+    positiveDetail: "Professional conduct builds trust and ensures a positive merchant experience."
+  },
+  { 
+    key: "properInstallation", 
+    question: "Was the POS device installed properly and positioned for convenient use?",
+    positiveDetail: "Proper installation ensures smooth operation and reduces future service calls."
+  },
+  { 
+    key: "postInstallationTest", 
+    question: "Did the engineer conduct a complete test transaction and show you the test slip?",
+    positiveDetail: "Test transactions confirm the system is working properly before the engineer leaves."
+  },
+  { 
+    key: "trainingProvided", 
+    question: "Was comprehensive training provided on how to use the POS system?",
+    positiveDetail: "Proper training ensures merchants can fully utilize all features of their POS system."
+  },
+  { 
+    key: "explanationClear", 
+    question: "Were all your questions answered clearly and thoroughly?",
+    positiveDetail: "Clear communication helps merchants understand their new system better."
+  },
+  { 
+    key: "functionsDemonstrated", 
+    question: "Were all key functions (printing, card processing, QR payments) demonstrated successfully?",
+    positiveDetail: "Demonstration of all functions ensures merchants can operate independently."
+  },
+  { 
+    key: "installationReportShared", 
+    question: "Did you receive a completed installation report or digital confirmation?",
+    positiveDetail: "Documentation provides a record of completed work for future reference."
+  },
+  { 
+    key: "merchantIdShared", 
+    question: "Were all necessary merchant IDs, passwords, and support contacts shared?",
+    positiveDetail: "Having all necessary information enables merchants to resolve issues independently."
+  }
+];
