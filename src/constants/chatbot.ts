@@ -48,6 +48,42 @@ export const FEEDBACK_QUESTIONS = feedbackQuestions;
 
 export const COMMENTS_PROMPT = "We would appreciate if you could share any additional comments about our service.";
 
+// Add the missing SERVICE_REQUEST_FIELDS constant
+export const SERVICE_REQUEST_FIELDS = {
+  merchantName: {
+    label: "Merchant Name",
+    placeholder: "Enter your business name"
+  },
+  merchantId: {
+    label: "Merchant ID",
+    placeholder: "Enter your merchant ID"
+  },
+  serialNumber: {
+    label: "POS Serial Number",
+    placeholder: "Enter POS machine serial number"
+  },
+  requestType: {
+    label: "Request Type",
+    placeholder: "Select request type"
+  },
+  preferredDate: {
+    label: "Preferred Date",
+    placeholder: "Select preferred date"
+  },
+  preferredTime: {
+    label: "Preferred Time",
+    placeholder: "Select preferred time"
+  },
+  contactName: {
+    label: "Contact Person",
+    placeholder: "Enter contact person name"
+  },
+  contactMobile: {
+    label: "Contact Mobile",
+    placeholder: "Enter 10-digit mobile number"
+  }
+};
+
 export const FAQ_ITEMS: FAQItem[] = [
   {
     keywords: ["installation", "setup", "install"],
