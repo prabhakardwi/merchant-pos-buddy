@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import ChatBubble from "./ChatBubble";
@@ -10,7 +11,8 @@ import {
   ServiceRequest, 
   RequestType, 
   MerchantInfo,
-  InstallationStep
+  InstallationStep,
+  POSType
 } from "@/types/chatbot";
 import { 
   GREETING_MESSAGE, 
@@ -45,7 +47,8 @@ const Chatbot: React.FC = () => {
     expectedInput,
     setExpectedInput,
     showCoins,
-    setShowCoins
+    setShowCoins,
+    setMessages
   } = useChatState();
   
   // Installation flow hooks
@@ -207,7 +210,7 @@ const Chatbot: React.FC = () => {
     
     // POS type selection step
     else if (installationStep === "posTypeSelection" && (option.value === "APOS" || option.value === "ClassicPOS")) {
-      handlePOSTypeSelection(option.value);
+      handlePOSTypeSelection(option.value as POSType);
       return true;
     }
     
@@ -274,7 +277,7 @@ const Chatbot: React.FC = () => {
   };
   
   // Handle POS type selection
-  const handlePOSTypeSelection = (posType: string) => {
+  const handlePOSTypeSelection = (posType: POSType) => {
     setCurrentRequest({
       ...currentRequest,
       posType
