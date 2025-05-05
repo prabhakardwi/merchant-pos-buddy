@@ -20,7 +20,8 @@ import {
   FAQ_MENU_OPTIONS,
   REQUEST_TYPE_LABELS,
   TIME_SLOTS,
-  FEEDBACK_QUESTIONS
+  FEEDBACK_QUESTIONS,
+  COMMENTS_PROMPT
 } from "@/constants/chatbot";
 import { findFAQMatch, formatBotMessage, generateTicketNumber, getCurrentDate } from "@/utils/chatbot";
 import { Button } from "@/components/ui/button";
@@ -43,8 +44,12 @@ const Chatbot: React.FC = () => {
   const [currentFeedbackQuestion, setCurrentFeedbackQuestion] = useState<number>(0);
   const [feedbackData, setFeedbackData] = useState<Partial<FeedbackData>>({});
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  
+  // Add new state variables for comments section
   const [showTextFeedback, setShowTextFeedback] = useState<boolean>(false);
   const [textFeedback, setTextFeedback] = useState<string>("");
+  const [showComments, setShowComments] = useState<boolean>(false); 
+  const [comments, setComments] = useState<string>("");
   const [earnedCoins, setEarnedCoins] = useState<number>(0);
   const [showCoins, setShowCoins] = useState<boolean[]>([]);
 
@@ -151,18 +156,66 @@ const Chatbot: React.FC = () => {
       
       // Add 5 more coins for text feedback
       const additionalCoins = 5;
+      const newCoins = earnedCoins + additionalCoins;
+      setEarnedCoins(newCoins);
+      
+      // Hide text feedback form and show comments form
+      setShowTextFeedback(false);
+      
+      // Show confirmation for text feedback
+      setTimeout(() => {
+        addSystemMessage(
+          <div className="space-y-2">
+            <p className="font-medium">✅ Feedback Submitted - Thank You!</p>
+            <p>Thank you for your detailed feedback! You've earned <strong>{additionalCoins} Service Coins</strong>!</p>
+          </div>
+        , true);
+        
+        // Now prompt for additional comments
+        setTimeout(() => {
+          addBotMessage(
+            <div className="space-y-2">
+              <p>{COMMENTS_PROMPT}</p>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-md p-2 mb-2">
+                <div className="flex items-center gap-1">
+                  <Coins className="h-4 w-4 text-yellow-500" />
+                  <p className="font-medium text-yellow-700">Share your comments to earn 3 extra Service Coins!</p>
+                </div>
+              </div>
+            </div>
+          );
+          setInstallationStep("comments");
+          setShowComments(true);
+          setInputDisabled(false);
+        }, 1500);
+      }, 1000);
+    }
+  };
+
+  const handleCommentsSubmit = () => {
+    if (comments.trim()) {
+      addUserMessage(comments);
+      
+      // Update current request with comments
+      setCurrentRequest(prev => ({
+        ...prev,
+        comments: comments
+      }));
+      
+      // Add 3 more coins for providing comments
+      const additionalCoins = 3;
       const newTotalCoins = earnedCoins + additionalCoins;
       setEarnedCoins(newTotalCoins);
       
-      // Hide text feedback form
-      setShowTextFeedback(false);
+      // Hide comments form
+      setShowComments(false);
       
       // Show confirmation and total coins earned
       setTimeout(() => {
         addSystemMessage(
           <div className="space-y-2">
-            <p className="font-medium">✅ Feedback Submitted - Thank You!</p>
-            <p>Thank you for your detailed feedback! You've earned <strong>{additionalCoins} extra Service Coins</strong>!</p>
+            <p className="font-medium">✅ Comments Received - Thank You!</p>
+            <p>Thank you for your valuable comments! You've earned <strong>{additionalCoins} extra Service Coins</strong>!</p>
             <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mt-2">
               <div className="flex items-center gap-2 text-yellow-700">
                 <Coins className="h-5 w-5 text-yellow-500" />
@@ -171,8 +224,8 @@ const Chatbot: React.FC = () => {
               <p className="text-sm mt-1 text-yellow-600">Collect 100 coins to redeem for 3 free paper rolls!</p>
             </div>
             <div className="mt-3 p-3 bg-blue-50 border border-blue-100 rounded-md">
-              <p className="font-medium text-blue-700 mb-2">Your detailed feedback:</p>
-              <p className="text-blue-800 italic">"{textFeedback}"</p>
+              <p className="font-medium text-blue-700 mb-2">Your comments:</p>
+              <p className="text-blue-800 italic">"{comments}"</p>
             </div>
           </div>
         , true);
@@ -679,7 +732,6 @@ const Chatbot: React.FC = () => {
           <OptionButtons options={currentOptions} onSelect={handleOptionSelect} />
         )}
         
-        {/* Fix: Display text feedback form when showTextFeedback is true */}
         {showTextFeedback && (
           <div className="bg-white border rounded-lg p-4 mt-4 shadow-sm animate-fade-in">
             <h3 className="font-medium mb-2 text-brand-dark">Additional Feedback</h3>
@@ -722,6 +774,48 @@ const Chatbot: React.FC = () => {
           </div>
         )}
         
+        {showComments && (
+          <div className="bg-white border rounded-lg p-4 mt-4 shadow-sm animate-fade-in">
+            <h3 className="font-medium mb-2 text-brand-dark">Merchant Comments</h3>
+            <div className="flex items-center gap-2 mb-3 bg-yellow-50 p-2 rounded-md">
+              <Coins className="h-5 w-5 text-yellow-500" />
+              <p className="text-sm text-yellow-700">
+                <span className="font-medium">Earn 3 extra Service Coins!</span> Share your comments about our service.
+              </p>
+            </div>
+            <Textarea 
+              value={comments}
+              onChange={(e) => setComments(e.target.value)}
+              placeholder="Please share your comments on our POS system and service..."
+              className="mb-3"
+            />
+            <div className="flex justify-end gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  setShowComments(false);
+                  addBotMessage("Is there anything else I can help you with?");
+                  showMainMenu();
+                }}
+              >
+                Skip
+              </Button>
+              <Button 
+                size="sm"
+                onClick={handleCommentsSubmit}
+                disabled={!comments.trim()}
+              >
+                <div className="flex items-center gap-1">
+                  <span>Submit</span>
+                  <Coins className="h-4 w-4" />
+                  <span>+3</span>
+                </div>
+              </Button>
+            </div>
+          </div>
+        )}
+        
         {showForm && activeRequestType && activeRequestType !== "installation" && (
           <ServiceRequestForm 
             requestType={activeRequestType}
@@ -739,6 +833,7 @@ const Chatbot: React.FC = () => {
             expectedInput === "merchantId" ? "Enter your Merchant ID..." :
             expectedInput === "otpVerification" ? "Enter the OTP code..." :
             showTextFeedback ? "Type your feedback..." :
+            showComments ? "Type your comments..." :
             inputDisabled ? "Please select an option above..." : 
             "Type your question here..."
           }

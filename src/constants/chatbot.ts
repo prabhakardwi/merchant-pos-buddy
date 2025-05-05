@@ -1,3 +1,4 @@
+
 import { FAQItem } from "../types/chatbot";
 
 export const CHATBOT_NAME = "POS Buddy";
@@ -135,3 +136,6 @@ export const FEEDBACK_QUESTIONS = [
     positiveDetail: "Having all necessary information enables merchants to resolve issues independently."
   }
 ];
+
+// Added new constant for comments section
+export const COMMENTS_PROMPT = "Please share any additional comments about your experience with our POS system installation service:";
