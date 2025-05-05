@@ -187,16 +187,7 @@ const Chatbot: React.FC = () => {
         
         setInstallationStep("comments");
         setShowComments(true);
-        setInputDisabled(true); // Initially disable input to force use of the comments form
-        
-        // Force a scroll to bottom to show the comments section
-        if (chatContainerRef.current) {
-          setTimeout(() => {
-            if (chatContainerRef.current) {
-              chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-            }
-          }, 100);
-        }
+        setInputDisabled(true);
       }, 1000);
     }
   };
@@ -385,9 +376,47 @@ const Chatbot: React.FC = () => {
         }
         break;
         
+      case "comments":
+        // Handle comments submission through direct input
+        if (input.trim()) {
+          setComments(input);
+          handleCommentsSubmit();
+        }
+        break;
+        
+      case "textFeedback":
+        // Handle text feedback submission through direct input
+        if (input.trim()) {
+          setTextFeedback(input);
+          handleTextFeedbackSubmit();
+        }
+        break;
+        
       default:
-        // Handle any other input
-        handleUserInput(input);
+        // For any other step, use the general input handling
+        // IMPORTANT: Fix the infinite recursion by NOT calling handleUserInput here
+        addUserMessage(input);
+        
+        // Try to find a matching FAQ
+        const faqMatch = findFAQMatch(input);
+        
+        if (faqMatch) {
+          // Found a FAQ match
+          setTimeout(() => {
+            addBotMessage(faqMatch.answer);
+            
+            setTimeout(() => {
+              addBotMessage("Is there anything else you'd like to know?");
+              showMainMenu();
+            }, 1000);
+          }, 500);
+        } else {
+          // No FAQ match found
+          setTimeout(() => {
+            addBotMessage("I'm not sure I understand. Let me help you with one of these options:");
+            showMainMenu();
+          }, 500);
+        }
         break;
     }
   };
@@ -654,14 +683,14 @@ const Chatbot: React.FC = () => {
     }
 
     // Allow comments submission through regular input when in comments step
-    if (installationStep === "comments" && !showComments) {
+    if (installationStep === "comments") {
       setComments(input);
       handleCommentsSubmit();
       return;
     }
     
     // For text feedback when in that step
-    if (installationStep === "textFeedback" && !showTextFeedback) {
+    if (installationStep === "textFeedback") {
       setTextFeedback(input);
       handleTextFeedbackSubmit();
       return;
@@ -769,7 +798,7 @@ const Chatbot: React.FC = () => {
               value={textFeedback}
               onChange={(e) => setTextFeedback(e.target.value)}
               placeholder="Please share your experience and suggestions..."
-              className="mb-3"
+              className="mb-3 min-h-[120px]"
             />
             <div className="flex justify-end gap-2">
               <Button 
@@ -812,7 +841,7 @@ const Chatbot: React.FC = () => {
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Please share your comments on our POS system and service..."
-              className="mb-3 border-blue-200 focus:border-blue-400"
+              className="mb-3 border-blue-200 focus:border-blue-400 min-h-[120px]"
             />
             <div className="flex justify-end gap-2">
               <Button 
