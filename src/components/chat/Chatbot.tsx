@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ChatHeader from "./ChatHeader";
 import ChatBody from "./ChatBody";
 import ChatFooter from "./ChatFooter";
@@ -178,7 +178,7 @@ const Chatbot: React.FC = () => {
       ...(currentRequest),
       preferredDate: tomorrowFormatted,
       preferredTime: selectedTime,
-      requestType: "installation",
+      requestType: "installation" as RequestType, // Type casting here
       serialNumber: `SN-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`,
       ticketNumber,
       serviceEngineerName: engineer.name,
