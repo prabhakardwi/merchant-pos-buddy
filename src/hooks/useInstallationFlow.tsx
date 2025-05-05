@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { generateTicketNumber } from "@/utils/chatbot";
 import { fetchMerchantInfo, generateOTP, getServiceEngineer } from "@/utils/merchantUtils";
@@ -315,12 +314,15 @@ export const useInstallationFlow = (
 
   return {
     installationStep,
+    setInstallationStep,
     merchantInfo,
     currentRequest,
     otp,
     setOtp,
     currentFeedbackQuestion,
+    setCurrentFeedbackQuestion,
     feedbackData,
+    setFeedbackData,
     earnedCoins,
     setEarnedCoins,
     showTextFeedback,
