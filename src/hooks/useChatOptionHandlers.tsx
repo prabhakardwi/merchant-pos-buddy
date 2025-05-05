@@ -70,7 +70,7 @@ const useChatOptionHandlers = ({
     // Feedback options
     else if (option.value === "yes-feedback") {
       setCurrentFeedbackQuestion(0);
-      setFeedbackData(() => ({}));
+      setFeedbackData(prev => ({}));
       handleFeedbackQuestion();
       return true;
     } 
