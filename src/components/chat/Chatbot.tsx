@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import ChatBubble from "./ChatBubble";
@@ -12,7 +13,8 @@ import {
   MerchantInfo, 
   InstallationStep,
   POSType,
-  FeedbackData
+  FeedbackData,
+  Language
 } from "@/types/chatbot";
 import { 
   GREETING_MESSAGE, 
@@ -22,11 +24,24 @@ import {
   TIME_SLOTS,
   FEEDBACK_QUESTIONS
 } from "@/constants/chatbot";
-import { findFAQMatch, formatBotMessage, generateTicketNumber, getCurrentDate } from "@/utils/chatbot";
+import { 
+  findFAQMatch, 
+  formatBotMessage, 
+  generateTicketNumber, 
+  getCurrentDate,
+  getTranslatedText
+} from "@/utils/chatbot";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, RotateCcw, Coins } from "lucide-react";
+import { MessageSquare, RotateCcw, Coins, Languages } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Chatbot: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -47,6 +62,19 @@ const Chatbot: React.FC = () => {
   const [textFeedback, setTextFeedback] = useState<string>("");
   const [earnedCoins, setEarnedCoins] = useState<number>(0);
   const [showCoins, setShowCoins] = useState<boolean[]>([]);
+  const [language, setLanguage] = useState<Language>("english");
+
+  // Language options for the dropdown
+  const languageOptions: { value: Language; label: string }[] = [
+    { value: "english", label: "English" },
+    { value: "hindi", label: "हिंदी (Hindi)" },
+    { value: "spanish", label: "Español (Spanish)" }
+  ];
+
+  // Get translated text helper
+  const translate = (key: string, params: Record<string, string> = {}) => {
+    return getTranslatedText(key, language, params);
+  };
 
   // Feedback questions array - updated to match our reduced list in constants
   const feedbackQuestions = [
@@ -59,11 +87,18 @@ const Chatbot: React.FC = () => {
 
   // Initialize chatbot with greeting
   useEffect(() => {
-    addBotMessage(GREETING_MESSAGE);
+    addBotMessage(translate("greeting"));
     setTimeout(() => {
       showMainMenu();
     }, 1000);
   }, []);
+
+  // Re-initialize bot when language changes
+  useEffect(() => {
+    if (messages.length > 0) {
+      handleRestart();
+    }
+  }, [language]);
 
   // Auto-scroll to bottom of chat
   useEffect(() => {
@@ -100,8 +135,18 @@ const Chatbot: React.FC = () => {
   };
 
   const showMainMenu = () => {
-    addSystemMessage("Please select an option:");
-    setCurrentOptions(MAIN_MENU_OPTIONS);
+    addSystemMessage(translate("select_option"));
+    
+    // Update main menu options with translations
+    const translatedMainMenu: Option[] = [
+      { id: "installation", label: translate("installation"), value: "installation" },
+      { id: "deinstallation", label: translate("deinstallation"), value: "deinstallation" },
+      { id: "reactivation", label: translate("reactivation"), value: "reactivation" },
+      { id: "maintenance", label: translate("maintenance"), value: "maintenance" },
+      { id: "faq", label: translate("faq"), value: "faq" }
+    ];
+    
+    setCurrentOptions(translatedMainMenu);
     setShowOptions(true);
     setInputDisabled(true);
     setExpectedInput("");
@@ -161,17 +206,17 @@ const Chatbot: React.FC = () => {
       setTimeout(() => {
         addSystemMessage(
           <div className="space-y-2">
-            <p className="font-medium">✅ Feedback Submitted - Thank You!</p>
-            <p>Thank you for your detailed feedback! You've earned <strong>{additionalCoins} extra Service Coins</strong>!</p>
+            <p className="font-medium">✅ {translate("feedback_submitted")}</p>
+            <p>{translate("extra_coins")} <strong>{additionalCoins} {translate("extra_service_coins")}</strong></p>
             <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mt-2">
               <div className="flex items-center gap-2 text-yellow-700">
                 <Coins className="h-5 w-5 text-yellow-500" />
-                <p className="font-semibold">Total Service Coins Earned: {newTotalCoins}</p>
+                <p className="font-semibold">{translate("total_coins")} {newTotalCoins}</p>
               </div>
-              <p className="text-sm mt-1 text-yellow-600">Collect 100 coins to redeem for 3 free paper rolls!</p>
+              <p className="text-sm mt-1 text-yellow-600">{translate("collect_coins")}</p>
             </div>
             <div className="mt-3 p-3 bg-blue-50 border border-blue-100 rounded-md">
-              <p className="font-medium text-blue-700 mb-2">Your detailed feedback:</p>
+              <p className="font-medium text-blue-700 mb-2">{translate("detailed_feedback")}</p>
               <p className="text-blue-800 italic">"{textFeedback}"</p>
             </div>
           </div>
@@ -185,7 +230,7 @@ const Chatbot: React.FC = () => {
         
         // Return to main menu
         setTimeout(() => {
-          addBotMessage("Is there anything else I can help you with?");
+          addBotMessage(translate("anything_else"));
           showMainMenu();
         }, 2000);
       }, 1000);
@@ -219,13 +264,13 @@ const Chatbot: React.FC = () => {
       
       addSystemMessage(
         <div className="space-y-2">
-          <p className="font-medium">✅ Feedback Submitted</p>
-          <p>Thank you for your feedback! You've earned <strong>{feedbackCoins} Service Coins</strong> for completing the survey.</p>
+          <p className="font-medium">✅ {translate("feedback_submitted")}</p>
+          <p>{translate("extra_coins")} <strong>{feedbackCoins} {translate("extra_service_coins")}</strong></p>
           <p>Your feedback score: <strong>{feedbackScore}%</strong></p>
           <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mt-2">
             <div className="flex items-center gap-2 text-yellow-700">
               <Coins className="h-5 w-5 text-yellow-500" />
-              <p className="font-semibold">Service Coins Earned: {feedbackCoins}</p>
+              <p className="font-semibold">{translate("total_coins")} {feedbackCoins}</p>
             </div>
           </div>
         </div>
@@ -241,14 +286,14 @@ const Chatbot: React.FC = () => {
       setTimeout(() => {
         addBotMessage(
           <div className="space-y-2">
-            <p>We'd love to hear more about your experience in detail.</p>
+            <p>{translate("share_experience")}</p>
             <div className="bg-yellow-50 border border-yellow-200 rounded-md p-2 mb-2">
               <div className="flex items-center gap-1">
                 <Coins className="h-4 w-4 text-yellow-500" />
-                <p className="font-medium text-yellow-700">Share your comments to earn 5 extra Service Coins!</p>
+                <p className="font-medium text-yellow-700">{translate("share_comments")}</p>
               </div>
             </div>
-            <p>Please provide any additional feedback or suggestions:</p>
+            <p>{translate("additional_feedback")}</p>
           </div>
         );
         setInstallationStep("textFeedback");
@@ -278,12 +323,12 @@ const Chatbot: React.FC = () => {
           setTimeout(() => {
             addBotMessage(
               <div className="space-y-2">
-                <p>I found your merchant information:</p>
-                <p><strong>Business:</strong> {merchant.businessName}</p>
-                <p><strong>Address:</strong> {merchant.address}</p>
-                <p><strong>Contact:</strong> {merchant.contactName}</p>
-                <p><strong>Mobile:</strong> {merchant.contactMobile}</p>
-                <p className="mt-4">Is this information correct? We'll need to verify with an OTP.</p>
+                <p>{translate("merchant_info_found")}</p>
+                <p><strong>{translate("business")}</strong> {merchant.businessName}</p>
+                <p><strong>{translate("address")}</strong> {merchant.address}</p>
+                <p><strong>{translate("contact")}</strong> {merchant.contactName}</p>
+                <p><strong>{translate("mobile")}</strong> {merchant.contactMobile}</p>
+                <p className="mt-4">{translate("merchant_confirmation")}</p>
               </div>
             );
             setInstallationStep("confirmMerchant");
@@ -305,22 +350,22 @@ const Chatbot: React.FC = () => {
         if (input === otp) {
           // OTP is correct, move to POS type selection
           setTimeout(() => {
-            addBotMessage("OTP verification successful! Now, which type of POS would you like to install?");
+            addBotMessage(translate("otp_success"));
             setInstallationStep("posTypeSelection");
             setCurrentOptions([
-              { id: "apos", label: "Advanced POS (APOS)", value: "APOS" },
-              { id: "classic", label: "Classic POS", value: "ClassicPOS" }
+              { id: "apos", label: translate("apos"), value: "APOS" },
+              { id: "classic", label: translate("classic_pos"), value: "ClassicPOS" }
             ]);
             setShowOptions(true);
           }, 1000);
         } else {
           // Incorrect OTP
           setTimeout(() => {
-            addBotMessage("Sorry, that OTP is incorrect. Please try again.");
+            addBotMessage(translate("otp_error"));
             // Generate a new OTP for security
             const newOtp = generateOTP();
             setOtp(newOtp);
-            addBotMessage(`A new verification code has been sent: ${newOtp}`);
+            addBotMessage(`${translate("otp_sent")} ${newOtp}`);
           }, 1000);
         }
         break;
@@ -357,7 +402,7 @@ const Chatbot: React.FC = () => {
     } else if (option.value === "no" && installationStep === "confirmMerchant") {
       // Go back to merchant ID input
       setTimeout(() => {
-        addBotMessage("Let's try again. Please enter your Merchant ID:");
+        addBotMessage(translate("merchant_id_prompt"));
         setInstallationStep("merchantId");
         setExpectedInput("merchantId");
       }, 1000);
@@ -403,7 +448,7 @@ const Chatbot: React.FC = () => {
           tomorrow.setDate(tomorrow.getDate() + 1);
           const tomorrowFormatted = tomorrow.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
           
-          addBotMessage(`Please select a time slot for your installation on ${tomorrowFormatted}:`);
+          addBotMessage(`${translate("time_slot")} ${tomorrowFormatted}:`);
           
           setInstallationStep("timeSlotSelection");
           setCurrentOptions([
@@ -442,13 +487,13 @@ const Chatbot: React.FC = () => {
       setTimeout(() => {
         addSystemMessage(
           <div className="space-y-2">
-            <p className="font-medium">✅ Installation Request Submitted</p>
-            <p>Your service ticket has been created:</p>
+            <p className="font-medium">✅ {translate("request_submitted")}</p>
+            <p>{translate("ticket_created")}</p>
             <p className="bg-brand-lightBlue p-2 rounded text-center font-bold">
               Ticket #{ticketNumber}
             </p>
-            <p>Service engineer <strong>{engineer.name}</strong> will visit your location on <strong>{tomorrow.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</strong> at <strong>{selectedTime}</strong>.</p>
-            <p>Contact engineer at: {engineer.mobile}</p>
+            <p>{translate("engineer_visit")} <strong>{tomorrow.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</strong> at <strong>{selectedTime}</strong>.</p>
+            <p>{translate("contact_engineer")} {engineer.mobile}</p>
           </div>
         );
         
@@ -460,10 +505,10 @@ const Chatbot: React.FC = () => {
         
         // Start feedback process after a delay
         setTimeout(() => {
-          addBotMessage("We'd like to ask for your feedback on previous installations to earn service coins. Would you like to proceed with the feedback?");
+          addBotMessage(translate("feedback_request"));
           setCurrentOptions([
-            { id: "yes-feedback", label: "Yes, provide feedback", value: "yes-feedback" },
-            { id: "skip-feedback", label: "No, skip feedback", value: "skip-feedback" }
+            { id: "yes-feedback", label: translate("yes_feedback"), value: "yes-feedback" },
+            { id: "skip-feedback", label: translate("skip_feedback"), value: "skip-feedback" }
           ]);
           setShowOptions(true);
         }, 2000);
@@ -476,7 +521,7 @@ const Chatbot: React.FC = () => {
       handleFeedbackQuestion();
     } else if (option.value === "skip-feedback") {
       // Skip feedback and return to main menu
-      addBotMessage("Thank you for scheduling your POS installation. Is there anything else I can help you with?");
+      addBotMessage(translate("anything_else"));
       
       // Reset installation flow and return to main menu
       setInstallationStep("merchantId");
@@ -520,7 +565,7 @@ const Chatbot: React.FC = () => {
       if (faqMatch) {
         addBotMessage(faqMatch.answer);
         setTimeout(() => {
-          addBotMessage("Is there anything else you'd like to know?");
+          addBotMessage(translate("anything_else"));
           showMainMenu();
         }, 1000);
       }
@@ -534,7 +579,7 @@ const Chatbot: React.FC = () => {
     setInputDisabled(false);
     setShowOptions(false);
     
-    addBotMessage("Let's get started with your installation request. Please enter your Merchant ID:");
+    addBotMessage(translate("merchant_id_prompt"));
   };
 
   const handleServiceRequestInit = (requestType: RequestType) => {
@@ -572,7 +617,7 @@ const Chatbot: React.FC = () => {
     });
     
     setTimeout(() => {
-      addBotMessage("Is there anything else I can help you with?");
+      addBotMessage(translate("anything_else"));
       showMainMenu();
     }, 1500);
   };
@@ -604,7 +649,7 @@ const Chatbot: React.FC = () => {
         addBotMessage(faqMatch.answer);
         
         setTimeout(() => {
-          addBotMessage("Is there anything else you'd like to know?");
+          addBotMessage(translate("anything_else"));
           showMainMenu();
         }, 1000);
       }, 500);
@@ -635,10 +680,14 @@ const Chatbot: React.FC = () => {
     setShowCoins([]);
     
     // Re-initialize chatbot
-    addBotMessage(GREETING_MESSAGE);
+    addBotMessage(translate("greeting"));
     setTimeout(() => {
       showMainMenu();
     }, 1000);
+  };
+  
+  const handleLanguageChange = (newLanguage: Language) => {
+    setLanguage(newLanguage);
   };
 
   return (
@@ -648,7 +697,27 @@ const Chatbot: React.FC = () => {
           <MessageSquare className="h-5 w-5" />
           <h2 className="text-lg font-medium">HDFC- Merchant POS Support</h2>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          {/* Language Selector */}
+          <div className="flex items-center gap-1">
+            <Languages className="h-4 w-4 text-white" />
+            <Select 
+              defaultValue={language} 
+              onValueChange={(value) => handleLanguageChange(value as Language)}
+            >
+              <SelectTrigger className="h-8 w-32 border-none bg-brand-blue/80 text-white text-sm focus:ring-0">
+                <SelectValue placeholder="Language" />
+              </SelectTrigger>
+              <SelectContent>
+                {languageOptions.map(option => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
           {earnedCoins > 0 && (
             <div className="flex items-center gap-1 bg-yellow-400 text-brand-dark px-2 py-1 rounded-full text-sm">
               <Coins className="h-4 w-4" />
@@ -682,11 +751,11 @@ const Chatbot: React.FC = () => {
         {/* Fix: Display text feedback form when showTextFeedback is true */}
         {showTextFeedback && (
           <div className="bg-white border rounded-lg p-4 mt-4 shadow-sm animate-fade-in">
-            <h3 className="font-medium mb-2 text-brand-dark">Additional Feedback</h3>
+            <h3 className="font-medium mb-2 text-brand-dark">{translate("additional_feedback")}</h3>
             <div className="flex items-center gap-2 mb-3 bg-yellow-50 p-2 rounded-md">
               <Coins className="h-5 w-5 text-yellow-500" />
               <p className="text-sm text-yellow-700">
-                <span className="font-medium">Earn 5 extra Service Coins!</span> Share your detailed experience.
+                <span className="font-medium">{translate("share_comments")}</span>
               </p>
             </div>
             <Textarea 
@@ -701,7 +770,7 @@ const Chatbot: React.FC = () => {
                 size="sm"
                 onClick={() => {
                   setShowTextFeedback(false);
-                  addBotMessage("Is there anything else I can help you with?");
+                  addBotMessage(translate("anything_else"));
                   showMainMenu();
                 }}
               >
