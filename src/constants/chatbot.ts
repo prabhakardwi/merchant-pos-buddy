@@ -90,3 +90,39 @@ export const FAQ_ITEMS: FAQItem[] = [
     answer: "To perform batch settlement: 1) Press the 'Menu' or 'Function' button, 2) Select 'Settlement' or 'Batch Close', 3) Enter your manager password if prompted, 4) The terminal will connect to the bank and process all transactions, 5) A settlement report will print. We recommend doing this at the end of each business day."
   }
 ];
+
+// Adding the SERVICE_REQUEST_FIELDS constant that's being imported but was missing
+export const SERVICE_REQUEST_FIELDS = {
+  merchantName: {
+    label: "Business Name",
+    placeholder: "Enter your business name"
+  },
+  merchantId: {
+    label: "Merchant ID",
+    placeholder: "Enter your merchant ID"
+  },
+  serialNumber: {
+    label: "Device Serial Number",
+    placeholder: "Enter device serial number"
+  },
+  requestType: {
+    label: "Request Type",
+    placeholder: "Select request type"
+  },
+  preferredDate: {
+    label: "Preferred Date",
+    placeholder: "Select your preferred date"
+  },
+  preferredTime: {
+    label: "Preferred Time Slot",
+    placeholder: "Select your preferred time"
+  },
+  contactName: {
+    label: "Contact Person",
+    placeholder: "Enter contact person's name"
+  },
+  contactMobile: {
+    label: "Contact Mobile",
+    placeholder: "Enter 10-digit mobile number"
+  }
+};
