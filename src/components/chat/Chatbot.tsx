@@ -173,6 +173,10 @@ const Chatbot: React.FC = () => {
               </div>
               <p className="text-sm mt-1 text-yellow-600">Collect 100 coins to redeem for 3 free paper rolls!</p>
             </div>
+            <div className="mt-3 p-3 bg-blue-50 border border-blue-100 rounded-md">
+              <p className="font-medium text-blue-700 mb-2">Your detailed feedback:</p>
+              <p className="text-blue-800 italic">"{textFeedback}"</p>
+            </div>
           </div>
         , true);
         
