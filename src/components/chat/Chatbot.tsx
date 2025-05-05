@@ -55,11 +55,11 @@ const Chatbot: React.FC = () => {
 
   // Feedback questions array - updated to match our reduced list in constants
   const feedbackQuestions = [
-    { key: "scheduledDateMet", question: "Was the installation done on the scheduled date?" },
-    { key: "engineerProfessional", question: "Was the engineer polite and professional?" },
-    { key: "properInstallation", question: "Was the device installed properly?" },
-    { key: "trainingProvided", question: "Was the demo/training provided?" },
-    { key: "merchantIdShared", question: "Were TIDs and merchant IDs shared?" }
+    { key: "scheduledDateMet", question: "Was the installation done on the scheduled date?", positiveDetail: "Great to hear we met the schedule!" },
+    { key: "engineerProfessional", question: "Was the engineer polite and professional?", positiveDetail: "We're glad our team provided professional service!" },
+    { key: "properInstallation", question: "Was the device installed properly?", positiveDetail: "Excellent! Quality installation is our priority." },
+    { key: "trainingProvided", question: "Was the demo/training provided?", positiveDetail: "Wonderful! Training is essential for optimal usage." },
+    { key: "merchantIdShared", question: "Were TIDs and merchant IDs shared?", positiveDetail: "Perfect! Having your IDs is important." }
   ];
 
   // Initialize chatbot with greeting
@@ -75,7 +75,7 @@ const Chatbot: React.FC = () => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, showTextFeedback, showComments]);
 
   const addMessage = (message: Omit<Message, "id" | "timestamp">, showCoin: boolean = false) => {
     const newMessage: Message = {
@@ -144,6 +144,7 @@ const Chatbot: React.FC = () => {
     return { name: randomName, mobile };
   };
 
+  // Fixed handleTextFeedbackSubmit function to correctly show comments section
   const handleTextFeedbackSubmit = () => {
     if (textFeedback.trim()) {
       addUserMessage(textFeedback);
@@ -154,7 +155,7 @@ const Chatbot: React.FC = () => {
         textFeedback: textFeedback
       }));
       
-      // Add 5 more coins for text feedback
+      // Add coins for text feedback
       const additionalCoins = 5;
       const newCoins = earnedCoins + additionalCoins;
       setEarnedCoins(newCoins);
@@ -163,17 +164,14 @@ const Chatbot: React.FC = () => {
       setShowTextFeedback(false);
       
       // Show confirmation for text feedback
-      setTimeout(() => {
-        addSystemMessage(
-          <div className="space-y-2">
-            <p className="font-medium">✅ Feedback Submitted - Thank You!</p>
-            <p>Thank you for your detailed feedback! You've earned <strong>{additionalCoins} Service Coins</strong>!</p>
-          </div>
-        , true);
-        
-        // Now prompt for additional comments - Fixed by moving this OUTSIDE the timeout
-      }, 1000);
+      addSystemMessage(
+        <div className="space-y-2">
+          <p className="font-medium">✅ Feedback Submitted - Thank You!</p>
+          <p>Thank you for your detailed feedback! You've earned <strong>{additionalCoins} Service Coins</strong>!</p>
+        </div>
+      , true);
       
+      // Show comments section after a short delay
       setTimeout(() => {
         addBotMessage(
           <div className="space-y-2">
@@ -186,10 +184,20 @@ const Chatbot: React.FC = () => {
             </div>
           </div>
         );
+        
         setInstallationStep("comments");
         setShowComments(true);
-        setInputDisabled(false);
-      }, 1500);
+        setInputDisabled(true); // Initially disable input to force use of the comments form
+        
+        // Force a scroll to bottom to show the comments section
+        if (chatContainerRef.current) {
+          setTimeout(() => {
+            if (chatContainerRef.current) {
+              chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+            }
+          }, 100);
+        }
+      }, 1000);
     }
   };
 
@@ -203,52 +211,51 @@ const Chatbot: React.FC = () => {
         comments: comments
       }));
       
-      // Add 3 more coins for providing comments
+      // Add coins for providing comments
       const additionalCoins = 3;
       const newTotalCoins = earnedCoins + additionalCoins;
       setEarnedCoins(newTotalCoins);
       
-      // Hide comments form
+      // Hide comments form and enable regular input
       setShowComments(false);
+      setInputDisabled(false);
       
       // Show confirmation and total coins earned
-      setTimeout(() => {
-        addSystemMessage(
-          <div className="space-y-2">
-            <p className="font-medium">✅ Comments Received - Thank You!</p>
-            <p>Thank you for your valuable comments! You've earned <strong>{additionalCoins} extra Service Coins</strong>!</p>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mt-2">
-              <div className="flex items-center gap-2 text-yellow-700">
-                <Coins className="h-5 w-5 text-yellow-500" />
-                <p className="font-semibold">Total Service Coins Earned: {newTotalCoins}</p>
-              </div>
-              <p className="text-sm mt-1 text-yellow-600">Collect 100 coins to redeem for 3 free paper rolls!</p>
+      addSystemMessage(
+        <div className="space-y-2">
+          <p className="font-medium">✅ Comments Received - Thank You!</p>
+          <p>Thank you for your valuable comments! You've earned <strong>{additionalCoins} extra Service Coins</strong>!</p>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mt-2">
+            <div className="flex items-center gap-2 text-yellow-700">
+              <Coins className="h-5 w-5 text-yellow-500" />
+              <p className="font-semibold">Total Service Coins Earned: {newTotalCoins}</p>
             </div>
-            <div className="mt-3 p-3 bg-blue-50 border border-blue-100 rounded-md">
-              <p className="font-medium text-blue-700 mb-2">Your comments:</p>
-              <p className="text-blue-800 italic">"{comments}"</p>
-            </div>
+            <p className="text-sm mt-1 text-yellow-600">Collect 100 coins to redeem for 3 free paper rolls!</p>
           </div>
-        , true);
-        
-        toast({
-          title: "Coins Earned!",
-          description: `You've earned ${additionalCoins} Service Coins. Your total is now ${newTotalCoins}.`,
-          duration: 5000,
-        });
-        
-        // Return to main menu
-        setTimeout(() => {
-          addBotMessage("Is there anything else I can help you with?");
-          showMainMenu();
-        }, 2000);
-      }, 1000);
+          <div className="mt-3 p-3 bg-blue-50 border border-blue-100 rounded-md">
+            <p className="font-medium text-blue-700 mb-2">Your comments:</p>
+            <p className="text-blue-800 italic">"{comments}"</p>
+          </div>
+        </div>
+      , true);
+      
+      toast({
+        title: "Coins Earned!",
+        description: `You've earned ${additionalCoins} Service Coins. Your total is now ${newTotalCoins}.`,
+        duration: 5000,
+      });
+      
+      // Return to main menu
+      setTimeout(() => {
+        addBotMessage("Is there anything else I can help you with?");
+        showMainMenu();
+      }, 2000);
     }
   };
 
   const handleFeedbackQuestion = () => {
-    if (currentFeedbackQuestion < FEEDBACK_QUESTIONS.length) {
-      const question = FEEDBACK_QUESTIONS[currentFeedbackQuestion];
+    if (currentFeedbackQuestion < feedbackQuestions.length) {
+      const question = feedbackQuestions[currentFeedbackQuestion];
       
       addBotMessage(
         <div className="space-y-1">
@@ -265,7 +272,7 @@ const Chatbot: React.FC = () => {
     } else {
       // All feedback questions completed
       const positiveAnswers = Object.values(feedbackData).filter(value => value === true).length;
-      const feedbackScore = Math.round((positiveAnswers / FEEDBACK_QUESTIONS.length) * 100);
+      const feedbackScore = Math.round((positiveAnswers / feedbackQuestions.length) * 100);
       
       // Award service coins based on feedback
       const feedbackCoins = positiveAnswers;
@@ -307,8 +314,7 @@ const Chatbot: React.FC = () => {
         );
         setInstallationStep("textFeedback");
         setShowTextFeedback(true);
-        // Ensure input field is enabled for text feedback
-        setInputDisabled(false);
+        setInputDisabled(true); // Disable regular input to force use of the feedback form
       }, 2000);
     }
   };
@@ -540,7 +546,7 @@ const Chatbot: React.FC = () => {
       showMainMenu();
     } else if (installationStep === "feedback" && (option.value === "yes" || option.value === "no")) {
       // Handle feedback response
-      const currentQuestion = FEEDBACK_QUESTIONS[currentFeedbackQuestion];
+      const currentQuestion = feedbackQuestions[currentFeedbackQuestion];
       
       // Fix: Check if currentQuestion exists before attempting to access its key property
       if (currentQuestion) {
@@ -641,8 +647,23 @@ const Chatbot: React.FC = () => {
   };
 
   const handleUserInput = (input: string) => {
+    // Handle specific input states first
     if (expectedInput === "merchantId" || expectedInput === "otpVerification") {
       handleInstallationFlow(input);
+      return;
+    }
+
+    // Allow comments submission through regular input when in comments step
+    if (installationStep === "comments" && !showComments) {
+      setComments(input);
+      handleCommentsSubmit();
+      return;
+    }
+    
+    // For text feedback when in that step
+    if (installationStep === "textFeedback" && !showTextFeedback) {
+      setTextFeedback(input);
+      handleTextFeedbackSubmit();
       return;
     }
     
@@ -685,6 +706,8 @@ const Chatbot: React.FC = () => {
     setFeedbackData({});
     setShowTextFeedback(false);
     setTextFeedback("");
+    setShowComments(false);
+    setComments("");
     setEarnedCoins(0);
     setShowCoins([]);
     
@@ -734,7 +757,7 @@ const Chatbot: React.FC = () => {
         )}
         
         {showTextFeedback && (
-          <div className="bg-white border rounded-lg p-4 mt-4 shadow-sm animate-fade-in">
+          <div className="bg-white border border-gray-200 rounded-lg p-4 mt-4 shadow-sm animate-fade-in">
             <h3 className="font-medium mb-2 text-brand-dark">Additional Feedback</h3>
             <div className="flex items-center gap-2 mb-3 bg-yellow-50 p-2 rounded-md">
               <Coins className="h-5 w-5 text-yellow-500" />
@@ -775,9 +798,9 @@ const Chatbot: React.FC = () => {
           </div>
         )}
         
-        {/* Make sure Comments section is visibly displayed when showComments is true */}
+        {/* Enhanced comments section with clearer styling */}
         {showComments && (
-          <div className="bg-white border rounded-lg p-4 mt-4 shadow-sm animate-fade-in">
+          <div className="bg-white border border-blue-200 rounded-lg p-4 mt-4 shadow-sm animate-fade-in">
             <h3 className="font-medium mb-2 text-brand-dark">Merchant Comments</h3>
             <div className="flex items-center gap-2 mb-3 bg-yellow-50 p-2 rounded-md">
               <Coins className="h-5 w-5 text-yellow-500" />
@@ -789,7 +812,7 @@ const Chatbot: React.FC = () => {
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Please share your comments on our POS system and service..."
-              className="mb-3"
+              className="mb-3 border-blue-200 focus:border-blue-400"
             />
             <div className="flex justify-end gap-2">
               <Button 
@@ -797,6 +820,7 @@ const Chatbot: React.FC = () => {
                 size="sm"
                 onClick={() => {
                   setShowComments(false);
+                  setInputDisabled(false);
                   addBotMessage("Is there anything else I can help you with?");
                   showMainMenu();
                 }}
@@ -807,6 +831,7 @@ const Chatbot: React.FC = () => {
                 size="sm"
                 onClick={handleCommentsSubmit}
                 disabled={!comments.trim()}
+                className="bg-blue-600 hover:bg-blue-700"
               >
                 <div className="flex items-center gap-1">
                   <span>Submit</span>
