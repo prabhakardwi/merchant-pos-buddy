@@ -1,5 +1,4 @@
 
-import React from "react";
 import { CHATBOT_NAME, FAQ_ITEMS } from "../constants/chatbot";
 import { FAQItem } from "../types/chatbot";
 
@@ -37,18 +36,4 @@ export function findFAQMatch(userInput: string): FAQItem | undefined {
 // Format message with bot name and timestamp
 export function formatBotMessage(message: string): string {
   return `${message}`;
-}
-
-// Generate a random 4-digit OTP
-export function generateOTP(): string {
-  return Math.floor(1000 + Math.random() * 9000).toString();
-}
-
-// Generate a random service engineer
-export function getServiceEngineer(): { name: string; mobile: string } {
-  const names = ["Alex Smith", "Jamie Johnson", "Chris Wilson", "Taylor Brown", "Jordan Lee"];
-  const randomName = names[Math.floor(Math.random() * names.length)];
-  const mobile = `+1 ${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}`;
-  
-  return { name: randomName, mobile };
 }

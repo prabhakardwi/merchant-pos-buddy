@@ -32,7 +32,6 @@ export interface ServiceRequest {
   serviceEngineerMobile?: string;
   feedback?: FeedbackData;
   coins?: number;
-  comments?: string; // Added comments field
 }
 
 export interface FeedbackData {
@@ -46,7 +45,6 @@ export interface FeedbackData {
   installationReportShared: boolean;
   merchantIdShared: boolean;
   textFeedback?: string;
-  comments?: string; // Added comments field
 }
 
 export interface FAQItem {
@@ -77,5 +75,4 @@ export type InstallationStep =
   | 'timeSlotSelection'
   | 'feedback'
   | 'textFeedback'
-  | 'comments' // Added comments step
   | 'confirmation';
