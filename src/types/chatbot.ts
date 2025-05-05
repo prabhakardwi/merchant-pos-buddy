@@ -16,6 +16,8 @@ export interface Option {
 
 export type RequestType = 'installation' | 'deinstallation' | 'reactivation' | 'maintenance';
 
+export type POSType = 'APOS' | 'ClassicPOS';
+
 export interface ServiceRequest {
   merchantName: string;
   merchantId: string;
@@ -26,6 +28,9 @@ export interface ServiceRequest {
   contactName: string;
   contactMobile: string;
   ticketNumber: string;
+  posType?: POSType;
+  serviceEngineerName?: string;
+  serviceEngineerMobile?: string;
 }
 
 export interface FAQItem {
@@ -33,3 +38,19 @@ export interface FAQItem {
   question: string;
   answer: string;
 }
+
+export interface MerchantInfo {
+  id: string;
+  businessName: string;
+  address: string;
+  contactName: string;
+  contactMobile: string;
+}
+
+export type InstallationStep = 
+  | 'merchantId'
+  | 'confirmMerchant' 
+  | 'otpVerification'
+  | 'posTypeSelection'
+  | 'timeSlotSelection'
+  | 'confirmation';
