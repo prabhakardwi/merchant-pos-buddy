@@ -159,7 +159,7 @@ const Chatbot: React.FC = () => {
       const newCoins = earnedCoins + additionalCoins;
       setEarnedCoins(newCoins);
       
-      // Hide text feedback form and show comments form
+      // Hide text feedback form
       setShowTextFeedback(false);
       
       // Show confirmation for text feedback
@@ -828,7 +828,7 @@ const Chatbot: React.FC = () => {
       <div className="p-4 border-t bg-white rounded-b-lg">
         <ChatInput 
           onSubmit={handleUserInput} 
-          disabled={inputDisabled || showForm}
+          disabled={inputDisabled || showForm || (showTextFeedback && !textFeedback.trim()) || (showComments && !comments.trim())}
           placeholder={
             expectedInput === "merchantId" ? "Enter your Merchant ID..." :
             expectedInput === "otpVerification" ? "Enter the OTP code..." :
