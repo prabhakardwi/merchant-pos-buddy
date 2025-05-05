@@ -257,6 +257,8 @@ const Chatbot: React.FC = () => {
         );
         setInstallationStep("textFeedback");
         setShowTextFeedback(true);
+        // Ensure input field is enabled for text feedback
+        setInputDisabled(false);
       }, 2000);
     }
   };
@@ -489,29 +491,33 @@ const Chatbot: React.FC = () => {
     } else if (installationStep === "feedback" && (option.value === "yes" || option.value === "no")) {
       // Handle feedback response
       const currentQuestion = FEEDBACK_QUESTIONS[currentFeedbackQuestion];
-      const key = currentQuestion.key as keyof FeedbackData;
-      const isPositive = option.value === "yes";
       
-      setFeedbackData(prev => ({
-        ...prev,
-        [key]: isPositive
-      }));
-      
-      // Show coin earned for each positive answer
-      if (isPositive) {
-        addBotMessage(
-          <div className="space-y-1">
-            <p>You earned 1 Service Coin! 🪙</p>
-            <p className="text-sm text-gray-600 italic">{currentQuestion.positiveDetail}</p>
-          </div>
-        , true);
+      // Fix: Check if currentQuestion exists before attempting to access its key property
+      if (currentQuestion) {
+        const key = currentQuestion.key as keyof FeedbackData;
+        const isPositive = option.value === "yes";
+        
+        setFeedbackData(prev => ({
+          ...prev,
+          [key]: isPositive
+        }));
+        
+        // Show coin earned for each positive answer
+        if (isPositive) {
+          addBotMessage(
+            <div className="space-y-1">
+              <p>You earned 1 Service Coin! 🪙</p>
+              <p className="text-sm text-gray-600 italic">{currentQuestion.positiveDetail}</p>
+            </div>
+          , true);
+        }
+        
+        // Move to next question
+        setCurrentFeedbackQuestion(currentFeedbackQuestion + 1);
+        setTimeout(() => {
+          handleFeedbackQuestion();
+        }, 500);
       }
-      
-      // Move to next question
-      setCurrentFeedbackQuestion(currentFeedbackQuestion + 1);
-      setTimeout(() => {
-        handleFeedbackQuestion();
-      }, 500);
     } else {
       // Handle FAQ option selection
       const faqMatch = findFAQMatch(option.value);
@@ -677,6 +683,7 @@ const Chatbot: React.FC = () => {
           <OptionButtons options={currentOptions} onSelect={handleOptionSelect} />
         )}
         
+        {/* Fix: Display text feedback form when showTextFeedback is true */}
         {showTextFeedback && (
           <div className="bg-white border rounded-lg p-4 mt-4 shadow-sm animate-fade-in">
             <h3 className="font-medium mb-2 text-brand-dark">Additional Feedback</h3>
@@ -731,7 +738,7 @@ const Chatbot: React.FC = () => {
       <div className="p-4 border-t bg-white rounded-b-lg">
         <ChatInput 
           onSubmit={handleUserInput} 
-          disabled={inputDisabled || showForm || showTextFeedback}
+          disabled={inputDisabled || showForm}
           placeholder={
             expectedInput === "merchantId" ? "Enter your Merchant ID..." :
             expectedInput === "otpVerification" ? "Enter the OTP code..." :
