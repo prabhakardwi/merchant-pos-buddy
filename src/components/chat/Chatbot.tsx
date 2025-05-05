@@ -171,24 +171,25 @@ const Chatbot: React.FC = () => {
           </div>
         , true);
         
-        // Now prompt for additional comments
-        setTimeout(() => {
-          addBotMessage(
-            <div className="space-y-2">
-              <p>{COMMENTS_PROMPT}</p>
-              <div className="bg-yellow-50 border border-yellow-200 rounded-md p-2 mb-2">
-                <div className="flex items-center gap-1">
-                  <Coins className="h-4 w-4 text-yellow-500" />
-                  <p className="font-medium text-yellow-700">Share your comments to earn 3 extra Service Coins!</p>
-                </div>
+        // Now prompt for additional comments - Fixed by moving this OUTSIDE the timeout
+      }, 1000);
+      
+      setTimeout(() => {
+        addBotMessage(
+          <div className="space-y-2">
+            <p>{COMMENTS_PROMPT}</p>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-md p-2 mb-2">
+              <div className="flex items-center gap-1">
+                <Coins className="h-4 w-4 text-yellow-500" />
+                <p className="font-medium text-yellow-700">Share your comments to earn 3 extra Service Coins!</p>
               </div>
             </div>
-          );
-          setInstallationStep("comments");
-          setShowComments(true);
-          setInputDisabled(false);
-        }, 1500);
-      }, 1000);
+          </div>
+        );
+        setInstallationStep("comments");
+        setShowComments(true);
+        setInputDisabled(false);
+      }, 1500);
     }
   };
 
@@ -774,6 +775,7 @@ const Chatbot: React.FC = () => {
           </div>
         )}
         
+        {/* Make sure Comments section is visibly displayed when showComments is true */}
         {showComments && (
           <div className="bg-white border rounded-lg p-4 mt-4 shadow-sm animate-fade-in">
             <h3 className="font-medium mb-2 text-brand-dark">Merchant Comments</h3>
@@ -834,13 +836,4 @@ const Chatbot: React.FC = () => {
             expectedInput === "otpVerification" ? "Enter the OTP code..." :
             showTextFeedback ? "Type your feedback..." :
             showComments ? "Type your comments..." :
-            inputDisabled ? "Please select an option above..." : 
-            "Type your question here..."
-          }
-        />
-      </div>
-    </div>
-  );
-};
-
-export default Chatbot;
+            inputDisabled ? "Please
