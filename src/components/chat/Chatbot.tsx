@@ -153,22 +153,23 @@ const Chatbot: React.FC = () => {
       }));
       
       // Add 5 more coins for text feedback
-      setEarnedCoins(prev => prev + 5);
+      const additionalCoins = 5;
+      const newTotalCoins = earnedCoins + additionalCoins;
+      setEarnedCoins(newTotalCoins);
       
       // Hide text feedback form
       setShowTextFeedback(false);
       
       // Show confirmation and total coins earned
       setTimeout(() => {
-        const totalCoins = earnedCoins + 5;
         addSystemMessage(
           <div className="space-y-2">
-            <p className="font-medium">✅ Feedback Submitted</p>
-            <p>Thank you for your detailed feedback! You've earned <strong>5 more Service Coins</strong>!</p>
+            <p className="font-medium">✅ Feedback Submitted - Thank You!</p>
+            <p>Thank you for your detailed feedback! You've earned <strong>{additionalCoins} extra Service Coins</strong>!</p>
             <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mt-2">
               <div className="flex items-center gap-2 text-yellow-700">
                 <Coins className="h-5 w-5 text-yellow-500" />
-                <p className="font-semibold">Total Service Coins Earned: {totalCoins}</p>
+                <p className="font-semibold">Total Service Coins Earned: {newTotalCoins}</p>
               </div>
               <p className="text-sm mt-1 text-yellow-600">Collect 100 coins to redeem for 3 free paper rolls!</p>
             </div>
@@ -177,7 +178,7 @@ const Chatbot: React.FC = () => {
         
         toast({
           title: "Coins Earned!",
-          description: `You've earned ${totalCoins} Service Coins total.`,
+          description: `You've earned ${additionalCoins} Service Coins. Your total is now ${newTotalCoins}.`,
           duration: 5000,
         });
         
@@ -233,7 +234,18 @@ const Chatbot: React.FC = () => {
       
       // Ask for additional text feedback
       setTimeout(() => {
-        addBotMessage("We'd love to hear more about your experience. Please provide any additional feedback or suggestions to earn 5 more Service Coins:");
+        addBotMessage(
+          <div className="space-y-2">
+            <p>We'd love to hear more about your experience in detail.</p>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-md p-2 mb-2">
+              <div className="flex items-center gap-1">
+                <Coins className="h-4 w-4 text-yellow-500" />
+                <p className="font-medium text-yellow-700">Share your comments to earn 5 extra Service Coins!</p>
+              </div>
+            </div>
+            <p>Please provide any additional feedback or suggestions:</p>
+          </div>
+        );
         setInstallationStep("textFeedback");
         setShowTextFeedback(true);
       }, 2000);
@@ -654,9 +666,12 @@ const Chatbot: React.FC = () => {
         {showTextFeedback && (
           <div className="bg-white border rounded-lg p-4 mt-4 shadow-sm animate-fade-in">
             <h3 className="font-medium mb-2 text-brand-dark">Additional Feedback</h3>
-            <p className="text-sm text-gray-500 mb-3">
-              Share your thoughts to earn 5 more Service Coins
-            </p>
+            <div className="flex items-center gap-2 mb-3 bg-yellow-50 p-2 rounded-md">
+              <Coins className="h-5 w-5 text-yellow-500" />
+              <p className="text-sm text-yellow-700">
+                <span className="font-medium">Earn 5 extra Service Coins!</span> Share your detailed experience.
+              </p>
+            </div>
             <Textarea 
               value={textFeedback}
               onChange={(e) => setTextFeedback(e.target.value)}
