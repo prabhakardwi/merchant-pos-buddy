@@ -646,7 +646,7 @@ const Chatbot: React.FC = () => {
       <div className="bg-brand-blue text-white p-4 rounded-t-lg flex items-center justify-between">
         <div className="flex items-center gap-2">
           <MessageSquare className="h-5 w-5" />
-          <h2 className="text-lg font-medium">POS Support</h2>
+          <h2 className="text-lg font-medium">HDFC- Merchant POS Support</h2>
         </div>
         <div className="flex items-center gap-2">
           {earnedCoins > 0 && (
