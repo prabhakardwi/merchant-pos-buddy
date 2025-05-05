@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import ChatBubble from "./ChatBubble";
@@ -32,7 +31,7 @@ import {
   getTranslatedText
 } from "@/utils/chatbot";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, RotateCcw, Coins, Languages } from "lucide-react";
+import { MessageSquare, RotateCcw, Coins, Languages, ArrowLeft } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -150,6 +149,22 @@ const Chatbot: React.FC = () => {
     setShowOptions(true);
     setInputDisabled(true);
     setExpectedInput("");
+  };
+
+  // Function to go back to main menu from anywhere
+  const handleBackToMenu = () => {
+    // Add a message to indicate going back to main menu
+    addSystemMessage(translate("back_to_menu"));
+    
+    // Reset all states
+    setShowOptions(false);
+    setShowForm(false);
+    setInputDisabled(false);
+    setExpectedInput("");
+    setShowTextFeedback(false);
+    
+    // Show main menu options
+    showMainMenu();
   };
 
   const showFAQMenu = () => {
@@ -801,6 +816,19 @@ const Chatbot: React.FC = () => {
       </div>
       
       <div className="p-4 border-t bg-white rounded-b-lg">
+        {/* Back to Menu button */}
+        <div className="flex items-center mb-3">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleBackToMenu}
+            className="flex items-center gap-1 text-brand-blue"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            {translate("back_to_menu") || "Back to Menu"}
+          </Button>
+        </div>
+        
         <ChatInput 
           onSubmit={handleUserInput} 
           disabled={inputDisabled || showForm}
