@@ -14,7 +14,17 @@ import {
   UserCheck,
   MapPin,
   Languages,
-  MessageSquare
+  MessageSquare,
+  Calendar,
+  CheckCircle,
+  Settings,
+  Bell,
+  AlertCircle,
+  BarChart,
+  CreditCard,
+  Headphones,
+  Info,
+  Phone
 } from "lucide-react";
 
 interface OptionButtonsProps {
@@ -36,23 +46,30 @@ const LIGHT_COLORS = [
 
 // Map of option IDs to icons
 const OPTION_ICONS: Record<string, React.ReactNode> = {
-  installation: <Package />,
-  deinstallation: <Download />,
-  reactivation: <RefreshCw />,
-  maintenance: <Wrench />,
-  faq: <HelpCircle />,
-  slot1: <Clock />,
-  slot2: <Clock />,
-  slot3: <Clock />,
-  yes: <UserCheck />,
-  no: <RefreshCw />,
-  apos: <Coins />,
-  classic: <Package />,
-  merchant_location: <MapPin />,
-  language: <Languages />,
-  contact_us: <MessageSquare />,
-  general: <FileText />
-  // Add more mappings as needed
+  installation: <Package size={28} />,
+  deinstallation: <Download size={28} />,
+  reactivation: <RefreshCw size={28} />,
+  maintenance: <Wrench size={28} />,
+  faq: <HelpCircle size={28} />,
+  slot1: <Clock size={28} />,
+  slot2: <Calendar size={28} />,
+  slot3: <CheckCircle size={28} />,
+  yes: <UserCheck size={28} />,
+  no: <RefreshCw size={28} />,
+  apos: <Coins size={28} />,
+  classic: <CreditCard size={28} />,
+  merchant_location: <MapPin size={28} />,
+  language: <Languages size={28} />,
+  contact_us: <MessageSquare size={28} />,
+  general: <FileText size={28} />,
+  support: <Headphones size={28} />,
+  schedule: <Calendar size={28} />,
+  settings: <Settings size={28} />,
+  alerts: <Bell size={28} />,
+  warnings: <AlertCircle size={28} />,
+  reports: <BarChart size={28} />,
+  info: <Info size={28} />,
+  call: <Phone size={28} />
 };
 
 const OptionButtons: React.FC<OptionButtonsProps> = ({ options, onSelect }) => {
@@ -62,12 +79,14 @@ const OptionButtons: React.FC<OptionButtonsProps> = ({ options, onSelect }) => {
         <Button
           key={option.id}
           variant="outline"
-          className={`${LIGHT_COLORS[index % LIGHT_COLORS.length]} hover:opacity-90 border border-gray-200 text-brand-dark w-[140px] h-[80px] flex flex-col items-center justify-center p-3 rounded-lg shadow-sm transition-all hover:shadow-md`}
+          className={`${LIGHT_COLORS[index % LIGHT_COLORS.length]} hover:opacity-90 border border-gray-200 text-brand-dark w-[140px] h-[80px] flex flex-col items-center justify-center p-3 rounded-lg shadow-sm transition-all hover:shadow-md hover:scale-105 hover:border-brand-blue`}
           onClick={() => onSelect(option)}
         >
           {/* Display icon if available for this option id */}
-          {OPTION_ICONS[option.id] || OPTION_ICONS[option.value] || <FileText />}
-          <span className="text-sm font-medium text-center mt-2">{option.label}</span>
+          <div className="flex items-center justify-center h-8 w-8 mb-1 text-brand-blue">
+            {OPTION_ICONS[option.id] || OPTION_ICONS[option.value] || <FileText size={28} />}
+          </div>
+          <span className="text-sm font-medium text-center mt-1 line-clamp-2">{option.label}</span>
         </Button>
       ))}
     </div>
