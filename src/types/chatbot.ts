@@ -1,3 +1,4 @@
+
 export type MessageType = 'bot' | 'user' | 'system';
 
 export interface Message {
@@ -32,33 +33,13 @@ export interface ServiceRequest {
   posType?: POSType;
   serviceEngineerName?: string;
   serviceEngineerMobile?: string;
-  feedback?: FeedbackData;
   coins?: number;
-}
-
-export interface FeedbackData {
-  scheduledDateMet: boolean;
-  engineerProfessional: boolean;
-  properInstallation: boolean;
-  postInstallationTest: boolean;
-  trainingProvided: boolean;
-  explanationClear: boolean;
-  functionsDemonstrated: boolean;
-  installationReportShared: boolean;
-  merchantIdShared: boolean;
-  textFeedback?: string;
 }
 
 export interface FAQItem {
   keywords: string[];
   question: string;
   answer: string;
-}
-
-export interface FeedbackQuestion {
-  key: string;
-  question: string;
-  positiveDetail: string;
 }
 
 export interface MerchantInfo {
@@ -75,6 +56,4 @@ export type InstallationStep =
   | 'otpVerification'
   | 'posTypeSelection'
   | 'timeSlotSelection'
-  | 'feedback'
-  | 'textFeedback'
   | 'confirmation';

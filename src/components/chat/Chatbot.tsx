@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import ChatBubble from "./ChatBubble";
@@ -12,7 +13,6 @@ import {
   MerchantInfo, 
   InstallationStep,
   POSType,
-  FeedbackData,
   Language
 } from "@/types/chatbot";
 import { 
@@ -20,8 +20,7 @@ import {
   MAIN_MENU_OPTIONS, 
   FAQ_MENU_OPTIONS,
   REQUEST_TYPE_LABELS,
-  TIME_SLOTS,
-  FEEDBACK_QUESTIONS
+  TIME_SLOTS
 } from "@/constants/chatbot";
 import { 
   findFAQMatch, 
@@ -33,7 +32,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { MessageSquare, RotateCcw, Coins, Languages, ArrowLeft } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -54,16 +52,12 @@ const Chatbot: React.FC = () => {
   const [merchantInfo, setMerchantInfo] = useState<MerchantInfo | null>(null);
   const [currentRequest, setCurrentRequest] = useState<Partial<ServiceRequest>>({});
   const [otp, setOtp] = useState<string>("");
-  const [currentFeedbackQuestion, setCurrentFeedbackQuestion] = useState<number>(0);
-  const [feedbackData, setFeedbackData] = useState<Partial<FeedbackData>>({});
-  const chatContainerRef = useRef<HTMLDivElement>(null);
-  const [showTextFeedback, setShowTextFeedback] = useState<boolean>(false);
-  const [textFeedback, setTextFeedback] = useState<string>("");
   const [earnedCoins, setEarnedCoins] = useState<number>(0);
   const [showCoins, setShowCoins] = useState<boolean[]>([]);
   const [language, setLanguage] = useState<Language>("english");
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Language options for the dropdown - updated to include Marathi
+  // Language options for the dropdown - including Marathi
   const languageOptions: { value: Language; label: string }[] = [
     { value: "english", label: "English" },
     { value: "hindi", label: "हिंदी (Hindi)" },
@@ -75,15 +69,6 @@ const Chatbot: React.FC = () => {
   const translate = (key: string, params: Record<string, string> = {}) => {
     return getTranslatedText(key, language, params);
   };
-
-  // Feedback questions array - updated to match our reduced list in constants
-  const feedbackQuestions = [
-    { key: "scheduledDateMet", question: "Was the installation done on the scheduled date?" },
-    { key: "engineerProfessional", question: "Was the engineer polite and professional?" },
-    { key: "properInstallation", question: "Was the device installed properly?" },
-    { key: "trainingProvided", question: "Was the demo/training provided?" },
-    { key: "merchantIdShared", question: "Were TIDs and merchant IDs shared?" }
-  ];
 
   // Initialize chatbot with greeting
   useEffect(() => {
@@ -162,7 +147,6 @@ const Chatbot: React.FC = () => {
     setShowForm(false);
     setInputDisabled(false);
     setExpectedInput("");
-    setShowTextFeedback(false);
     
     // Show main menu options
     showMainMenu();
@@ -198,126 +182,6 @@ const Chatbot: React.FC = () => {
     const mobile = `+1 ${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}`;
     
     return { name: randomName, mobile };
-  };
-
-  const handleTextFeedbackSubmit = () => {
-    if (textFeedback.trim()) {
-      addUserMessage(textFeedback);
-      
-      // Update feedback data with text feedback
-      setFeedbackData(prev => ({
-        ...prev,
-        textFeedback: textFeedback
-      }));
-      
-      // Add 5 more coins for text feedback
-      const additionalCoins = 5;
-      const newTotalCoins = earnedCoins + additionalCoins;
-      setEarnedCoins(newTotalCoins);
-      
-      // Hide text feedback form
-      setShowTextFeedback(false);
-      
-      // Show confirmation and total coins earned
-      setTimeout(() => {
-        addSystemMessage(
-          <div className="space-y-2">
-            <p className="font-medium">✅ {translate("feedback_submitted")}</p>
-            <p>{translate("extra_coins")} <strong>{additionalCoins} {translate("extra_service_coins")}</strong></p>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mt-2">
-              <div className="flex items-center gap-2 text-yellow-700">
-                <Coins className="h-5 w-5 text-yellow-500" />
-                <p className="font-semibold">{translate("total_coins")} {newTotalCoins}</p>
-              </div>
-              <p className="text-sm mt-1 text-yellow-600">{translate("collect_coins")}</p>
-            </div>
-            <div className="mt-3 p-3 bg-blue-50 border border-blue-100 rounded-md">
-              <p className="font-medium text-blue-700 mb-2">{translate("detailed_feedback")}</p>
-              <p className="text-blue-800 italic">"{textFeedback}"</p>
-            </div>
-          </div>
-        , true);
-        
-        toast({
-          title: "Coins Earned!",
-          description: `You've earned ${additionalCoins} Service Coins. Your total is now ${newTotalCoins}.`,
-          duration: 5000,
-        });
-        
-        // Return to main menu
-        setTimeout(() => {
-          addBotMessage(translate("anything_else"));
-          showMainMenu();
-        }, 2000);
-      }, 1000);
-    }
-  };
-
-  const handleFeedbackQuestion = () => {
-    if (currentFeedbackQuestion < FEEDBACK_QUESTIONS.length) {
-      const question = FEEDBACK_QUESTIONS[currentFeedbackQuestion];
-      
-      addBotMessage(
-        <div className="space-y-1">
-          <p>{question.question}</p>
-        </div>
-      );
-      
-      setCurrentOptions([
-        { id: "yes", label: "Yes", value: "yes" },
-        { id: "no", label: "No", value: "no" }
-      ]);
-      setShowOptions(true);
-      setInstallationStep("feedback");
-    } else {
-      // All feedback questions completed
-      const positiveAnswers = Object.values(feedbackData).filter(value => value === true).length;
-      const feedbackScore = Math.round((positiveAnswers / FEEDBACK_QUESTIONS.length) * 100);
-      
-      // Award service coins based on feedback
-      const feedbackCoins = positiveAnswers;
-      setEarnedCoins(feedbackCoins);
-      
-      addSystemMessage(
-        <div className="space-y-2">
-          <p className="font-medium">✅ {translate("feedback_submitted")}</p>
-          <p>{translate("extra_coins")} <strong>{feedbackCoins} {translate("extra_service_coins")}</strong></p>
-          <p>Your feedback score: <strong>{feedbackScore}%</strong></p>
-          <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mt-2">
-            <div className="flex items-center gap-2 text-yellow-700">
-              <Coins className="h-5 w-5 text-yellow-500" />
-              <p className="font-semibold">{translate("total_coins")} {feedbackCoins}</p>
-            </div>
-          </div>
-        </div>
-      , true);
-      
-      toast({
-        title: "Feedback Submitted",
-        description: `You've earned ${feedbackCoins} Service Coins!`,
-        duration: 5000,
-      });
-      
-      // Ask for additional text feedback
-      setTimeout(() => {
-        addBotMessage(
-          <div className="space-y-2">
-            <p>{translate("share_experience")}</p>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-md p-2 mb-2">
-              <div className="flex items-center gap-1">
-                <Coins className="h-4 w-4 text-yellow-500" />
-                <p className="font-medium text-yellow-700">{translate("share_comments")}</p>
-              </div>
-            </div>
-            <p>{translate("additional_feedback")}</p>
-          </div>
-        );
-        setInstallationStep("textFeedback");
-        setShowTextFeedback(true);
-        // Ensure input field is enabled for text feedback
-        setInputDisabled(false);
-      }, 2000);
-    }
   };
 
   const handleInstallationFlow = (input: string) => {
@@ -519,62 +383,12 @@ const Chatbot: React.FC = () => {
           duration: 5000,
         });
         
-        // Start feedback process after a delay
+        // Return to main menu after installation is scheduled
         setTimeout(() => {
-          addBotMessage(translate("feedback_request"));
-          setCurrentOptions([
-            { id: "yes-feedback", label: translate("yes_feedback"), value: "yes-feedback" },
-            { id: "skip-feedback", label: translate("skip_feedback"), value: "skip-feedback" }
-          ]);
-          setShowOptions(true);
+          addBotMessage(translate("anything_else"));
+          showMainMenu();
         }, 2000);
       }, 1000);
-    } else if (option.value === "yes-feedback") {
-      // Start the feedback process
-      setCurrentFeedbackQuestion(0);
-      setFeedbackData({});
-      setEarnedCoins(0);
-      handleFeedbackQuestion();
-    } else if (option.value === "skip-feedback") {
-      // Skip feedback and return to main menu
-      addBotMessage(translate("anything_else"));
-      
-      // Reset installation flow and return to main menu
-      setInstallationStep("merchantId");
-      setCurrentRequest({});
-      setMerchantInfo(null);
-      setExpectedInput("");
-      showMainMenu();
-    } else if (installationStep === "feedback" && (option.value === "yes" || option.value === "no")) {
-      // Handle feedback response
-      const currentQuestion = FEEDBACK_QUESTIONS[currentFeedbackQuestion];
-      
-      // Fix: Check if currentQuestion exists before attempting to access its key property
-      if (currentQuestion) {
-        const key = currentQuestion.key as keyof FeedbackData;
-        const isPositive = option.value === "yes";
-        
-        setFeedbackData(prev => ({
-          ...prev,
-          [key]: isPositive
-        }));
-        
-        // Show coin earned for each positive answer
-        if (isPositive) {
-          addBotMessage(
-            <div className="space-y-1">
-              <p>You earned 1 Service Coin! 🪙</p>
-              <p className="text-sm text-gray-600 italic">{currentQuestion.positiveDetail}</p>
-            </div>
-          , true);
-        }
-        
-        // Move to next question
-        setCurrentFeedbackQuestion(currentFeedbackQuestion + 1);
-        setTimeout(() => {
-          handleFeedbackQuestion();
-        }, 500);
-      }
     } else {
       // Handle FAQ option selection
       const faqMatch = findFAQMatch(option.value);
@@ -688,10 +502,6 @@ const Chatbot: React.FC = () => {
     setInstallationStep("merchantId");
     setCurrentRequest({});
     setMerchantInfo(null);
-    setCurrentFeedbackQuestion(0);
-    setFeedbackData({});
-    setShowTextFeedback(false);
-    setTextFeedback("");
     setEarnedCoins(0);
     setShowCoins([]);
     
@@ -764,49 +574,6 @@ const Chatbot: React.FC = () => {
           <OptionButtons options={currentOptions} onSelect={handleOptionSelect} />
         )}
         
-        {/* Fix: Display text feedback form when showTextFeedback is true */}
-        {showTextFeedback && (
-          <div className="bg-white border rounded-lg p-4 mt-4 shadow-sm animate-fade-in">
-            <h3 className="font-medium mb-2 text-brand-dark">{translate("additional_feedback")}</h3>
-            <div className="flex items-center gap-2 mb-3 bg-yellow-50 p-2 rounded-md">
-              <Coins className="h-5 w-5 text-yellow-500" />
-              <p className="text-sm text-yellow-700">
-                <span className="font-medium">{translate("share_comments")}</span>
-              </p>
-            </div>
-            <Textarea 
-              value={textFeedback}
-              onChange={(e) => setTextFeedback(e.target.value)}
-              placeholder="Please share your experience and suggestions..."
-              className="mb-3"
-            />
-            <div className="flex justify-end gap-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => {
-                  setShowTextFeedback(false);
-                  addBotMessage(translate("anything_else"));
-                  showMainMenu();
-                }}
-              >
-                Skip
-              </Button>
-              <Button 
-                size="sm"
-                onClick={handleTextFeedbackSubmit}
-                disabled={!textFeedback.trim()}
-              >
-                <div className="flex items-center gap-1">
-                  <span>Submit</span>
-                  <Coins className="h-4 w-4" />
-                  <span>+5</span>
-                </div>
-              </Button>
-            </div>
-          </div>
-        )}
-        
         {showForm && activeRequestType && activeRequestType !== "installation" && (
           <ServiceRequestForm 
             requestType={activeRequestType}
@@ -836,7 +603,6 @@ const Chatbot: React.FC = () => {
           placeholder={
             expectedInput === "merchantId" ? "Enter your Merchant ID..." :
             expectedInput === "otpVerification" ? "Enter the OTP code..." :
-            showTextFeedback ? "Type your feedback..." :
             inputDisabled ? "Please select an option above..." : 
             "Type your question here..."
           }
