@@ -2,6 +2,20 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Option } from "@/types/chatbot";
+import { 
+  FileText, 
+  Download, 
+  RefreshCw, 
+  Wrench, 
+  HelpCircle,
+  Package,
+  Coins,
+  Clock,
+  UserCheck,
+  MapPin,
+  Languages,
+  MessageSquare
+} from "lucide-react";
 
 interface OptionButtonsProps {
   options: Option[];
@@ -20,6 +34,27 @@ const LIGHT_COLORS = [
   "bg-[#F1F0FB]", // Soft Gray
 ];
 
+// Map of option IDs to icons
+const OPTION_ICONS: Record<string, React.ReactNode> = {
+  installation: <Package />,
+  deinstallation: <Download />,
+  reactivation: <RefreshCw />,
+  maintenance: <Wrench />,
+  faq: <HelpCircle />,
+  slot1: <Clock />,
+  slot2: <Clock />,
+  slot3: <Clock />,
+  yes: <UserCheck />,
+  no: <RefreshCw />,
+  apos: <Coins />,
+  classic: <Package />,
+  merchant_location: <MapPin />,
+  language: <Languages />,
+  contact_us: <MessageSquare />,
+  general: <FileText />
+  // Add more mappings as needed
+};
+
 const OptionButtons: React.FC<OptionButtonsProps> = ({ options, onSelect }) => {
   return (
     <div className="flex flex-wrap gap-3 mt-3 mb-4 justify-start">
@@ -30,7 +65,9 @@ const OptionButtons: React.FC<OptionButtonsProps> = ({ options, onSelect }) => {
           className={`${LIGHT_COLORS[index % LIGHT_COLORS.length]} hover:opacity-90 border border-gray-200 text-brand-dark w-[140px] h-[80px] flex flex-col items-center justify-center p-3 rounded-lg shadow-sm transition-all hover:shadow-md`}
           onClick={() => onSelect(option)}
         >
-          <span className="text-sm font-medium text-center">{option.label}</span>
+          {/* Display icon if available for this option id */}
+          {OPTION_ICONS[option.id] || OPTION_ICONS[option.value] || <FileText />}
+          <span className="text-sm font-medium text-center mt-2">{option.label}</span>
         </Button>
       ))}
     </div>
